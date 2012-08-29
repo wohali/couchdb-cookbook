@@ -26,6 +26,8 @@ Cookbook attributes are named under the `couch_db` keyspace. The attributes spec
 * `node['couch_db']['src_checksum']` - sha256sum of the default version of couchdb to download
 * `node['couch_db']['src_version']` - default version of couchdb to download, used in the full URL to download.
 * `node['couch_db']['src_mirror']` - full URL to download.
+* `node['couch_db']['bind_address']` - specify address couchdb should
+  bind to. nil by default, which will use couchdb's built in default, 5984.
 
 RECIPES
 =======
