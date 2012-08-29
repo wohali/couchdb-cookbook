@@ -1,0 +1,3 @@
+cookbook "couchdb" do
+  runtimes []
+end
