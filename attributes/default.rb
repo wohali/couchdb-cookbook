@@ -21,3 +21,4 @@ default['couch_db']['src_checksum']      = "6ef82a7ba0f132d55af7cc78b30658d5b3a4
 default['couch_db']['src_version']       = "1.0.2"
 default['couch_db']['src_mirror']        = "http://archive.apache.org/dist/couchdb/#{node['couch_db']['src_version']}/apache-couchdb-#{node['couch_db']['src_version']}.tar.gz"
 default['couch_db']['bind_address']  = nil
+default['couch_db']['install_erlang'] = true
