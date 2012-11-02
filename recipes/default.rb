@@ -19,8 +19,8 @@
 
 include_recipe "erlang"
 
-case node['platform']
-when "redhat","centos","fedora","amazon"
+case node['platform_family']
+when "redhat","fedora"
   group "couchdb" do
     system true
   end
@@ -65,7 +65,7 @@ directory "/var/lib/couchdb" do
 end
 
 service "couchdb" do
-  if platform?("centos","redhat","fedora")
+  if platform_family?("redhat","fedora")
     start_command "/sbin/service couchdb start &> /dev/null"
     stop_command "/sbin/service couchdb stop &> /dev/null"
   end

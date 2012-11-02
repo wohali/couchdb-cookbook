@@ -4,8 +4,8 @@ license           "Apache 2.0"
 description       "Installs CouchDB package and starts service"
 long_description  <<-EOH
 Installs the CouchDB package if it is available from an package repository on
-the node. If the package repository is not available, CouchDB needs to be 
-installed via some other method, either a backported package, or compiled 
+the node. If the package repository is not available, CouchDB needs to be
+installed via some other method, either a backported package, or compiled
 directly from source. CouchDB is available on Red Hat-based systems through
 the EPEL Yum Repository.
 EOH
@@ -19,6 +19,6 @@ supports          "debian", ">= 5.0" # for package in APT
 supports          "openbsd"
 supports          "freebsd"
 
-%w{ rhel centos fedora }.each do |os|
+%w{ rhel centos fedora scientific}.each do |os|
   supports os # requires EPEL Yum Repository
 end
