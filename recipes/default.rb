@@ -34,6 +34,8 @@ when "redhat","fedora"
   end
 end
 
+include_recipe "yum::epel"
+
 package "couchdb" do
   package_name value_for_platform(
     "openbsd" => { "default" => "apache-couchdb" },

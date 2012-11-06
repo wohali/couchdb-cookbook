@@ -11,6 +11,7 @@ the EPEL Yum Repository.
 EOH
 version           "1.0.2"
 depends           "erlang"
+depends           "yum"
 recipe            "couchdb", "Installs and configures CouchDB package"
 recipe            "couchdb::source", "Installs and configures CouchDB from source"
 
