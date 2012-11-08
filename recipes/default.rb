@@ -67,7 +67,7 @@ directory "/var/lib/couchdb" do
 end
 
 service "couchdb" do
-  if platform_family?("redhat","fedora")
+  if platform_family?("rhel","fedora")
     start_command "/sbin/service couchdb start &> /dev/null"
     stop_command "/sbin/service couchdb stop &> /dev/null"
   end
