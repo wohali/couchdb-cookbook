@@ -20,7 +20,7 @@
 include_recipe "erlang"
 
 case node['platform_family']
-when "redhat","fedora"
+when "rhel","fedora"
   group "couchdb" do
     system true
   end
