@@ -1,3 +1,4 @@
+name              "couchdb"
 maintainer        "Opscode, Inc."
 maintainer_email  "cookbooks@opscode.com"
 license           "Apache 2.0"
@@ -9,7 +10,7 @@ installed via some other method, either a backported package, or compiled
 directly from source. CouchDB is available on Red Hat-based systems through
 the EPEL Yum Repository.
 EOH
-version           "1.0.4"
+version           "1.0.5"
 depends           "erlang"
 recipe            "couchdb", "Installs and configures CouchDB package"
 recipe            "couchdb::source", "Installs and configures CouchDB from source"
