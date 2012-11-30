@@ -21,8 +21,8 @@ if node['couch_db']['install_erlang']
   include_recipe "erlang"
 end
 
-case node['platform']
-when "redhat","centos","fedora","amazon"
+case node['platform_family']
+when "rhel","fedora"
   group "couchdb" do
     system true
   end
@@ -35,6 +35,8 @@ when "redhat","centos","fedora","amazon"
     system true
   end
 end
+
+include_recipe "yum::epel"
 
 package "couchdb" do
   package_name value_for_platform(
@@ -67,7 +69,7 @@ directory "/var/lib/couchdb" do
 end
 
 service "couchdb" do
-  if platform?("centos","redhat","fedora")
+  if platform_family?("rhel","fedora")
     start_command "/sbin/service couchdb start &> /dev/null"
     stop_command "/sbin/service couchdb stop &> /dev/null"
   end
