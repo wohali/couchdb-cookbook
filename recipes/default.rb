@@ -32,9 +32,10 @@ when "rhel","fedora"
     home "/var/lib/couchdb"
     system true
   end
+
+  include_recipe "yum::epel"
 end
 
-include_recipe "yum::epel"
 
 package "couchdb" do
   package_name value_for_platform(
