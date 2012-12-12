@@ -21,6 +21,6 @@ supports          "debian", ">= 5.0" # for package in APT
 supports          "openbsd"
 supports          "freebsd"
 
-%w{ rhel centos fedora scientific}.each do |os|
+%w{ redhat centos fedora scientific oracle amazon }.each do |os|
   supports os # requires EPEL Yum Repository
 end
