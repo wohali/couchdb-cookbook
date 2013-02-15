@@ -40,7 +40,6 @@ if %w(debian ubuntu).include?(node['platform'])
       "9.10" => "libmozjs-dev",
       '10.04' => 'xulrunner-dev',
       '10.10' => 'xulrunner-dev',
-      '11.04' => 'libmozjs-dev',
       'default' => 'libmozjs-dev'
     }
   )
