@@ -1,3 +1,8 @@
+## v2.2.0:
+
+* [COOK-1905] - It should be possible to customize the local.ini file
+  in couchdb cookbook
+
 ## v2.1.0:
 
 * [COOK-2139] - fedora has couchdb package, no EPEL required
