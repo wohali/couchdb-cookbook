@@ -22,10 +22,6 @@ if node['platform'] == "ubuntu" && node['platform_version'].to_f == 8.04
   return
 end
 
-if node['couch_db']['install_erlang']
-  include_recipe "erlang"
-end
-
 couchdb_tar_gz = File.join(Chef::Config[:file_cache_path], "/", "apache-couchdb-#{node['couch_db']['src_version']}.tar.gz")
 compile_flags = String.new
 dev_pkgs = Array.new
@@ -44,13 +40,26 @@ when "debian"
     }
   )
 
-  dev_pkgs.each do |pkg|
-    package pkg
-  end
-
   if node['platform_version'].to_f >= 10.04
     compile_flags = "--with-js-lib=/usr/lib/xulrunner-devel-1.9.2.8/lib --with-js-include=/usr/lib/xulrunner-devel-1.9.2.8/include"
   end
+when "rhel", "fedora"
+  include_recipe "yum::epel"
+
+  dev_pkgs += [
+    "which",
+    "make", "gcc",
+    "libicu-devel", "openssl-devel", "curl-devel", "libtool",
+    "js-devel"
+  ]
+end
+
+if node['couch_db']['install_erlang']
+  include_recipe "erlang"
+end
+
+dev_pkgs.each do |pkg|
+  package pkg
 end
 
 remote_file couchdb_tar_gz do
@@ -80,6 +89,16 @@ end
     group "couchdb"
     mode "0770"
   end
+end
+
+template "/usr/local/etc/couchdb/local.ini" do
+  source "local.ini.erb"
+  owner "couchdb"
+  group "couchdb"
+  mode 0660
+  variables(
+    :config => node['couch_db']['config']
+  )
 end
 
 cookbook_file "/etc/init.d/couchdb" do
