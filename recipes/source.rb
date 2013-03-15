@@ -34,15 +34,11 @@ when "debian"
   dev_pkgs << value_for_platform(
     "debian" => { "default" => "libmozjs-dev" },
     "ubuntu" => {
-      "9.04" => "libmozjs-dev",
-      "9.10" => "libmozjs-dev",
-      "default" => "xulrunner-dev"
+      "10.04" => "xulrunner-dev",
+      "default" => "libmozjs-dev"
     }
   )
 
-  if node['platform_version'].to_f >= 10.04
-    compile_flags = "--with-js-lib=/usr/lib/xulrunner-devel-1.9.2.8/lib --with-js-include=/usr/lib/xulrunner-devel-1.9.2.8/include"
-  end
 when "rhel", "fedora"
   include_recipe "yum::epel"
 
