@@ -36,5 +36,6 @@ suites:
   attributes: {}
 - name: source
   run_list:
+  - recipe[build-essential]
   - recipe[couchdb::source]
   attributes: {}
