@@ -50,8 +50,12 @@ when "rhel", "fedora"
     "which",
     "make", "gcc",
     "libicu-devel", "openssl-devel", "curl-devel", "libtool",
-    "js-devel"
+    "js-devel",
   ]
+
+  # awkwardly tell ./configure where to find Erlang's headers
+  bitness = node['kernel']['machine'] =~ /64/ ? "lib64" : "lib"
+  compile_flags = "--with-erlang=/usr/#{bitness}/erlang/usr/include"
 end
 
 if node['couch_db']['install_erlang']
