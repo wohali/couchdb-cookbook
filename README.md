@@ -1,24 +1,34 @@
-DESCRIPTION
+Description
 ===========
 
 Installs and configures CouchDB. Optionally can install CouchDB from sources.
 
-REQUIREMENTS
+Requirements
 ============
 
 Requires a platform that can install Erlang from distribution packages.
 
 ## Platform
 
-Tested on Debian 5+, Ubuntu 8.10+, OpenBSD and FreeBSD.
+Originally tested on Debian 5+, Ubuntu 8.10+, OpenBSD and FreeBSD.
 
 Also works on Red Hat, CentOS and Fedora, requires the EPEL yum repository.
+
+Tested via Test Kitchen (1.0-alpha):
+
+* Ubuntu 10.04, 12.04
+* CentOS 5.8, 6.3
 
 ## Cookbooks
 
 * erlang
 
-ATTRIBUTES
+When using the `couchdb::source` recipe, the `build-essential` recipe
+is required. It is not a direct dependency of this cookbook as it is
+an optional installation method, and package installation is
+recommended.
+
+Attributes
 ==========
 
 Cookbook attributes are named under the `couch_db` keyspace.
@@ -114,7 +124,7 @@ and their associated default value.
 * `node['couch_db']['config']['log']['level']` -
    CouchDB's log level, defaults to `info`.
 
-RECIPES
+Recipes
 =======
 
 default
@@ -127,7 +137,7 @@ source
 
 Downloads the CouchDB source from the Apache project site, plus development dependencies. Then builds the binaries for installation, creates a user and directories, then sets up the couchdb service. Uses the init script provided in the cookbook.
 
-LICENSE AND AUTHOR
+License and Author
 ==================
 
 * Author: Joshua Timberman (<joshua@opscode.com>)
