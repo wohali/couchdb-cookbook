@@ -69,6 +69,11 @@ directory "/var/lib/couchdb" do
   )
 end
 
+# shutdown the couch started by couchdb package
+execute "shutdown-couch" do
+  command "killall couchdb; killall beam; sleep 3"
+end
+
 service "couchdb" do
   if platform_family?("rhel","fedora")
     start_command "/sbin/service couchdb start &> /dev/null"
