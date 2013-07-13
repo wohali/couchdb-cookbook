@@ -99,6 +99,7 @@ template "/usr/local/etc/couchdb/local.ini" do
   variables(
     :config => node['couch_db']['config']
   )
+  notifies :restart, "service[couchdb]"
 end
 
 cookbook_file "/etc/init.d/couchdb" do

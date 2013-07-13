@@ -55,6 +55,7 @@ template "/etc/couchdb/local.ini" do
   variables(
     :config => node['couch_db']['config']
   )
+  notifies :restart, "service[couchdb]"
 end
 
 directory "/var/lib/couchdb" do
