@@ -83,7 +83,7 @@ user "couchdb" do
   system true
 end
 
-%w{ var/lib/couchdb var/log/couchdb var/run etc/couchdb }.each do |dir|
+%w{ var/lib/couchdb var/log/couchdb var/run/couchdb etc/couchdb }.each do |dir|
   directory "/usr/local/#{dir}" do
     owner "couchdb"
     group "couchdb"
