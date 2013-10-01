@@ -2,6 +2,12 @@ CouchDB Cookbook CHANGELOG
 ==========================
 This file is used to list changes made in each version of the CouchDB cookbook.
 
+
+v2.4.4
+------
+### Bug
+- **[COOK-3659](https://tickets.opscode.com/browse/COOK-3659)** - Don't change directory ownership of `/var/run`
+
 v2.4.2
 ------
 ### Bug
