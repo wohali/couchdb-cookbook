@@ -73,7 +73,7 @@ bash "install couchdb #{node['couch_db']['src_version']}" do
     tar -zxf #{couchdb_tar_gz}
     cd apache-couchdb-#{node['couch_db']['src_version']} && ./configure #{compile_flags} && make && make install
   EOH
-  not_if { ::FileTest.exists?("/usr/local/bin/couchdb") }
+  not_if "test -f /usr/local/bin/couchdb && /usr/local/bin/couchdb -V | grep 'Apache CouchDB #{node['couch_db']['src_version']}'"
 end
 
 user "couchdb" do
