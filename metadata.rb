@@ -10,7 +10,7 @@ installed via some other method, either a backported package, or compiled
 directly from source. CouchDB is available on Red Hat-based systems through
 the EPEL Yum Repository.
 EOH
-version           "2.4.6"
+version           "2.4.7"
 depends           "erlang"
 depends           "yum", '< 3'
 recipe            "couchdb", "Installs and configures CouchDB package"
