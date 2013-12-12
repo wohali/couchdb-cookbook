@@ -3,6 +3,11 @@ CouchDB Cookbook CHANGELOG
 This file is used to list changes made in each version of the CouchDB cookbook.
 
 
+v2.4.6
+------
+Locking yum dependency to '< 3'
+
+
 v2.4.4
 ------
 ### Bug
