@@ -12,7 +12,7 @@ the EPEL Yum Repository.
 EOH
 version           "2.4.5"
 depends           "erlang"
-depends           "yum"
+depends           "yum", '< 3'
 recipe            "couchdb", "Installs and configures CouchDB package"
 recipe            "couchdb::source", "Installs and configures CouchDB from source"
 
