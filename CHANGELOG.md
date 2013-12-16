@@ -3,6 +3,13 @@ CouchDB Cookbook CHANGELOG
 This file is used to list changes made in each version of the CouchDB cookbook.
 
 
+v2.5.0
+------
+Porting to use cookbook yum ~> 3.0
+Fixing up style to pass rubocop
+Updating testing bits
+
+
 v2.4.8
 ------
 fixing metadata version error. locking to 3.0"
