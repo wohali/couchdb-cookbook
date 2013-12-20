@@ -1,4 +1,4 @@
-w#
+#
 # Author:: Joshua Timberman <joshua@opscode.com>
 # Cookbook Name:: couchdb
 # Recipe:: source
