@@ -2,6 +2,13 @@ CouchDB Cookbook CHANGELOG
 ==========================
 This file is used to list changes made in each version of the CouchDB cookbook.
 
+v2.5.1
+------
+Update default version to CouchDB 1.5.0
+Update source download URL to new format
+Fix testkitchen support
+Fix stray "w" in 1.5.0
+
 
 v2.5.0
 ------

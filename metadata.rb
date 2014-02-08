@@ -1,6 +1,6 @@
 name              'couchdb'
-maintainer        'Opscode, Inc.'
-maintainer_email  'cookbooks@opscode.com'
+maintainer        'Joan Touzet'
+maintainer_email  'wohali@apache.org'
 license           'Apache 2.0'
 description       'Installs CouchDB package and starts service'
 long_description  <<-EOH
