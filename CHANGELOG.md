@@ -4,6 +4,7 @@ This file is used to list changes made in each version of the CouchDB cookbook.
 
 v2.5.1
 ------
+New cookbook maintainer
 Update default version to CouchDB 1.5.0
 Update source download URL to new format
 Fix testkitchen support
