@@ -71,6 +71,8 @@ service 'couchdb' do
   if platform_family?('rhel', 'fedora')
     start_command '/sbin/service couchdb start &> /dev/null'
     stop_command '/sbin/service couchdb stop &> /dev/null'
+  elsif platform_family?('ubuntu', 'debian')
+    provider Chef::Provider::Service::Upstart
   end
   supports [:restart, :status]
   action [:enable, :start]
