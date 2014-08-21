@@ -68,6 +68,7 @@ directory '/var/lib/couchdb' do
 end
 
 service 'couchdb' do
+  provider Chef::Provider::Service::Upstart if platform?("ubuntu") && node["platform_version"].to_f >= 13.10
   if platform_family?('rhel', 'fedora')
     start_command '/sbin/service couchdb start &> /dev/null'
     stop_command '/sbin/service couchdb stop &> /dev/null'
