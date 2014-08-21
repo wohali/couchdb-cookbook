@@ -2,6 +2,13 @@ CouchDB Cookbook CHANGELOG
 ==========================
 This file is used to list changes made in each version of the CouchDB cookbook.
 
+v2.5.2
+------
+Add nohup to running couch to make it work with Test Kitchen
+adding case for libmozjs package for ubuntu 14.04
+Specify upstart service provider for ubuntu >=13.10
+
+
 v2.5.1
 ------
 New cookbook maintainer
