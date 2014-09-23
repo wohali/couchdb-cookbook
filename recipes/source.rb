@@ -44,7 +44,7 @@ when 'rhel', 'fedora'
   include_recipe 'yum-epel'
 
   dev_pkgs += %w{
-    which make gcc js-devel libtool
+    which make gcc gcc-c++ js-devel libtool
     libicu-devel openssl-devel curl-devel
   }
 
