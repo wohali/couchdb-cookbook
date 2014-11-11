@@ -49,8 +49,12 @@ when 'rhel', 'fedora'
   }
 
   # awkwardly tell ./configure where to find Erlang's headers
-  bitness = node['kernel']['machine'] =~ /64/ ? 'lib64' : 'lib'
-  compile_flags = "--with-erlang=/usr/#{bitness}/erlang/usr/include"
+  # bitness = node['kernel']['machine'] =~ /64/ ? 'lib64' : 'lib'
+  if Dir.exists?("/usr/lib64/erlang/usr/include")
+    compile_flags = "--with-erlang=/usr/lib64/erlang/usr/include"
+  else
+    compile_flags = "--with-erlang=/usr/lib/erlang/usr/include"
+  end
 end
 
 include_recipe 'erlang' if node['couch_db']['install_erlang']
