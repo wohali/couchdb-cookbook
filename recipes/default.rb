@@ -44,7 +44,9 @@ package 'couchdb' do
     )
 end
 
-template '/etc/couchdb/local.ini' do
+node.set['couch_db']['config_dir'] = config_dir = '/etc/couchdb'
+
+template File.join(config_dir, 'local.ini') do
   source 'local.ini.erb'
   owner 'couchdb'
   group 'couchdb'
