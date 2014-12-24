@@ -22,7 +22,7 @@ if node['platform'] == 'ubuntu' && node['platform_version'].to_f == 8.04
   return
 end
 
-couchdb_tar_gz = File.join(Chef::Config[:file_cache_path], '/', "apache-couchdb-#{node['couch_db']['src_version']}.tar.gz")
+couchdb_tar_gz = "apache-couchdb-#{node['couch_db']['src_version']}.tar.gz"
 compile_flags = ''
 dev_pkgs = []
 
@@ -59,18 +59,11 @@ dev_pkgs.each do |pkg|
   package pkg
 end
 
-remote_file couchdb_tar_gz do
+ark couchdb_tar_gz do
+  url node['couch_db']['src_mirror']
   checksum node['couch_db']['src_checksum']
-  source node['couch_db']['src_mirror']
-end
-
-bash "install couchdb #{node['couch_db']['src_version']}" do
-  cwd Chef::Config[:file_cache_path]
-  code <<-EOH
-    tar -zxf #{couchdb_tar_gz}
-    cd apache-couchdb-#{node['couch_db']['src_version']} && ./configure #{compile_flags} && make && make install
-  EOH
-  not_if "test -f /usr/local/bin/couchdb && /usr/local/bin/couchdb -V | grep 'Apache CouchDB #{node['couch_db']['src_version']}'"
+  version node['couch_db']['src_vesion']
+  action :install_with_make
 end
 
 user 'couchdb' do
