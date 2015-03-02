@@ -40,7 +40,9 @@ def load_current_resource
 end
 
 def create_database
-  response = JSON.parse(shell_out(create_db_command).stdout)
+  cmd = Mixlib::ShellOut.new(create_db_command)
+  cmd.run_command
+  response = JSON.parse(cmd.stdout)
   response.include("ok")
 end
 
