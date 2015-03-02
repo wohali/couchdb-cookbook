@@ -37,7 +37,11 @@ end
 
 def create_database
   bash "Creating database #{new_resource.database_name}" do
-    code "curl -X PUT http://#{new_resource.database_host}:#{new_resource.database_port}/#{new_resource.database_name}"
+    if new_resource.couchdb_user == nil && new_resource.couchdb_password == nil
+      code "curl -X PUT http://#{new_resource.database_host}:#{new_resource.database_port}/#{new_resource.database_name}"
+    else
+      code "curl -X PUT http://#{new_resource.couchdb_user}:#{new_resource.couchdb_password}@#{new_resource.database_host}:#{new_resource.database_port}/#{new_resource.database_name}"
+    end
   end
 end
 
