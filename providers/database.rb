@@ -29,6 +29,8 @@ def load_current_resource
 
   @current_resource = Chef::Resource::CouchdbDatabase.new(@new_resource.name)
   @current_resource.name(@new_resource.name)
+  @current_resource.couchdb_user(@new_resource.couchdb_user)
+  @current_resource.couchdb_password(@new_resource.couchdb_password)
 
   if database_exists?(@current_resource.database_name)
     @current_resource.exists = true
