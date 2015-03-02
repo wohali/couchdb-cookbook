@@ -79,7 +79,3 @@ service 'couchdb' do
   action [:enable, :start]
 end
 
-couchdb_database "testing" do
-  action :create
-end
-
