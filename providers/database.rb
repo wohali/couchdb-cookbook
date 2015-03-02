@@ -43,7 +43,7 @@ def create_database
   cmd = Mixlib::ShellOut.new(create_db_command)
   cmd.run_command
   response = JSON.parse(cmd.stdout)
-  Chef::Log.fatal("Unable to create DB!") unless response.include?("ok")
+  Chef::Application.fatal!("Unable to create DB!") unless response.include?("ok")
 end
 
 def create_db_command
