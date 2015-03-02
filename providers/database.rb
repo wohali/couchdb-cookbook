@@ -40,7 +40,7 @@ def load_current_resource
 end
 
 def create_database
-  response = JSON.parse(shellout(create_db_command).stdout)
+  response = JSON.parse(shell_out(create_db_command).stdout)
   response.include("ok")
 end
 
