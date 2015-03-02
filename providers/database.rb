@@ -1,4 +1,6 @@
 
+require 'chef/mixin/shell_out'
+require 'chef/mixin/language'
 require 'json'
 
 def whyrun_supported?
@@ -38,12 +40,15 @@ def load_current_resource
 end
 
 def create_database
-  bash "Creating database #{new_resource.database_name}" do
-    if new_resource.couchdb_user == nil && new_resource.couchdb_password == nil
-      code "curl -X PUT http://#{new_resource.database_host}:#{new_resource.database_port}/#{new_resource.database_name}"
-    else
-      code "curl -X PUT http://#{new_resource.couchdb_user}:#{new_resource.couchdb_password}@#{new_resource.database_host}:#{new_resource.database_port}/#{new_resource.database_name}"
-    end
+  response = JSON.parse(shellout(create_db_command).stdout)
+  response.include("ok")
+end
+
+def create_db_command
+  if new_resource.couchdb_user == nil && new_resource.couchdb_password == nil
+    code "curl -X PUT http://#{new_resource.database_host}:#{new_resource.database_port}/#{new_resource.database_name}"
+  else
+    code "curl -X PUT http://#{new_resource.couchdb_user}:#{new_resource.couchdb_password}@#{new_resource.database_host}:#{new_resource.database_port}/#{new_resource.database_name}"
   end
 end
 
