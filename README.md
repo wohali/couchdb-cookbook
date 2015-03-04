@@ -137,6 +137,20 @@ source
 
 Downloads the CouchDB source from the Apache project site, plus development dependencies. Then builds the binaries for installation, creates a user and directories, then sets up the couchdb service. Uses the init script provided in the cookbook.
 
+LWRPs
+=====
+
+database
+--------
+Can be used to create a database on a CouchDB install.
+
+* `database_name` - name of the database to create.
+* `database_host` - host name or IP address of the database server.
+* `database_port` - TCP port of the database server.
+* `couchdb_user` - username to bind to the CouchDB server with (optional).
+* `couchdb_password` - password to bind to the CouchDB server with (optional).
+
+
 License and Author
 ==================
 
