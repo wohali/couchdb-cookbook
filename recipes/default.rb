@@ -44,16 +44,7 @@ package 'couchdb' do
     )
 end
 
-template '/etc/couchdb/local.ini' do
-  source 'local.ini.erb'
-  owner 'couchdb'
-  group 'couchdb'
-  mode 0664
-  variables(
-    :config => node['couch_db']['config']
-  )
-  notifies :restart, 'service[couchdb]'
-end
+couchdb_config '/etc/couchdb'
 
 directory '/var/lib/couchdb' do
   owner 'couchdb'

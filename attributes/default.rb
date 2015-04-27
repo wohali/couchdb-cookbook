@@ -41,3 +41,5 @@ default['couch_db']['config']['httpd']['port'] = 5984
 default['couch_db']['config']['httpd']['bind_address'] = '127.0.0.1'
 
 default['couch_db']['config']['log']['level'] = 'info'
+
+default['couch_db']['runtime_config_name'] = node['hostname']
