@@ -2,6 +2,12 @@ CouchDB Cookbook CHANGELOG
 ==========================
 This file is used to list changes made in each version of the CouchDB cookbook.
 
+v2.5.3
+------
+Multiple fixes for CentOS, recent Debian/Ubuntu builds
+Prefer /usr/lib64/ over /usr/lib when present
+Store CouchDB UUID into host-specific local.ini file
+
 v2.5.2
 ------
 Add nohup to running couch to make it work with Test Kitchen
