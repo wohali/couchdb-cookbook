@@ -88,16 +88,7 @@ end
   end
 end
 
-template '/usr/local/etc/couchdb/local.ini' do
-  source 'local.ini.erb'
-  owner 'couchdb'
-  group 'couchdb'
-  mode 0660
-  variables(
-    :config => node['couch_db']['config']
-  )
-  notifies :restart, 'service[couchdb]'
-end
+couchdb_config '/usr/local/etc/couchdb'
 
 cookbook_file '/etc/init.d/couchdb' do
   source 'couchdb.init'
