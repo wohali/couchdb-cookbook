@@ -39,6 +39,7 @@ when 'debian'
     'ubuntu' => {
       '10.04' => 'xulrunner-dev',
       '14.04' => 'libmozjs185-dev',
+      '16.04' => 'libmozjs185-dev',
       'default' => 'libmozjs-dev'
     }
   )
