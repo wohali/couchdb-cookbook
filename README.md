@@ -10,14 +10,11 @@ Requires a platform that can install Erlang from distribution packages.
 
 ## Platform
 
-Originally tested on Debian 5+, Ubuntu 8.10+, OpenBSD and FreeBSD.
+Tested via Test Kitchen:
 
-Also works on Red Hat, CentOS and Fedora, requires the EPEL yum repository.
-
-Tested via Test Kitchen (1.0-alpha):
-
-* Ubuntu 10.04, 12.04
-* CentOS 5.8, 6.3
+* CentOS 6.9, 7.3
+* Debian 7, 8
+* Ubuntu 12.04, 14.04, 16.04
 
 ## Cookbooks
 
@@ -140,12 +137,6 @@ Downloads the CouchDB source from the Apache project site, plus development depe
 License and Author
 ==================
 
-* Author: Joshua Timberman (<joshua@opscode.com>)
-* Author: Matthieu Vachon (<matthieu.o.vachon@gmail.com>)
-* Author: Joan Touzet (<wohali@apache.org>)
-
-Copyright 2009-2014, Opscode, Inc.
-
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -157,3 +148,11 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+* Author: Joshua Timberman (<joshua@opscode.com>)
+* Author: Matthieu Vachon (<matthieu.o.vachon@gmail.com>)
+* Author: Joan Touzet (<wohali@apache.org>)
+
+Copyright 2009-2014, Opscode, Inc.
+Copyright 2014-2017, Joan Touzet
+
