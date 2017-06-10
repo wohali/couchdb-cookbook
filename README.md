@@ -16,16 +16,17 @@ Tested via Test Kitchen:
 * Debian 7, 8
 * Ubuntu 12.04, 14.04
 
-**NOTE** Ubuntu 16.04 (xenial) does not have an old enough version of Erlang available to support CouchDB 1.x! This cookbook will move to support CouchDB 2.x soon, resolving this issue.
+**NOTE** Ubuntu 16.04 (xenial) does not have an old enough version of Erlang
+available to support CouchDB 1.x! This cookbook will move to support CouchDB 2.x
+soon, resolving this issue.
 
 ## Cookbooks
 
 * erlang
 
-When using the `couchdb::source` recipe, the `build-essential` recipe
-is required. It is not a direct dependency of this cookbook as it is
-an optional installation method, and package installation is
-recommended.
+When using the `couchdb::source` recipe, the `build-essential` recipe is
+required. It is not a direct dependency of this cookbook as it is an optional
+installation method, and package installation is recommended.
 
 Attributes
 ==========
@@ -52,24 +53,23 @@ Will result in the following lines in the `local.ini` file:
     [httpd]
     bind_address = "0.0.0.0"
 
-The attributes file contains default values for platform-independent
-parameters. All parameter values that expect a path argument are
-not set by default. The default values that are currently set have
-been taken from the CouchDB configuration
-[wiki page](http://wiki.apache.org/couchdb/Configurationfile_couch.ini).
+The attributes file contains default values for platform-independent parameters.
+All parameter values that expect a path argument are not set by default. The
+default values that are currently set have been taken from the CouchDB
+configuration [wiki
+page](http://wiki.apache.org/couchdb/Configurationfile_couch.ini).
 
 The resulting configuration file is now dynamically rendered from the
-attributes. Each subkey below the `config` key is a specific section
-of the `local.ini` file. Then each subkey in a section is a parameter
-associated with a value.
+attributes. Each subkey below the `config` key is a specific section of the
+`local.ini` file. Then each subkey in a section is a parameter associated with a
+value.
 
-You should consult the CouchDB documentation for specific
-configuration details.
+You should consult the CouchDB documentation for specific configuration details.
 
-For values that are "on" or "off", they should be specified as literal
-`true` or `false`. Any configuration option set to the literal `nil` will
-be skipped entirely. All other values (e.g., string, numeric literals) will
-be used as is. So for example:
+For values that are "on" or "off", they should be specified as literal `true` or
+`false`. Any configuration option set to the literal `nil` will be skipped
+entirely. All other values (e.g., string, numeric literals) will be used as is.
+So for example:
 
     node.default['couch_db']['config']['couchdb']['os_process_timeout'] = 5000
     node.default['couch_db']['config']['couchdb']['delayed_commits'] = true
@@ -91,8 +91,8 @@ Will result in the following config lines:
 
 ### Defaults
 
-Here the list of attributes that are already provided by the recipe
-and their associated default value.
+Here the list of attributes that are already provided by the recipe and their
+associated default value.
 
 #### Section [couchdb]
 
@@ -153,17 +153,16 @@ Can be used to create a database on a CouchDB install.
 License and Author
 ==================
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License.  You may obtain a copy of the
+License at
 
     http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations under the License.
 
 * Author: Joshua Timberman (<joshua@opscode.com>)
 * Author: Matthieu Vachon (<matthieu.o.vachon@gmail.com>)

@@ -14,14 +14,14 @@ desc 'Run all tasks'
 task all: [:doc, :rubocop, :foodcritic, :spec, 'kitchen:all']
 
 desc 'Build documentation'
-#task doc: [:knifecookbookdoc, :yard]
+# task doc: [:knifecookbookdoc, :yard]
 task doc: [:yard]
 
 desc 'Run kitchen integration tests'
 task test: ['kitchen:all']
 
-#desc 'Generate README.md from _README.md.erb'
-#KnifeCookbookDoc::RakeTask.new(:knifecookbookdoc)
+# desc 'Generate README.md from _README.md.erb'
+# KnifeCookbookDoc::RakeTask.new(:knifecookbookdoc)
 
 FoodCritic::Rake::LintTask.new do |t|
   t.options = { fail_tags: ['all'] }

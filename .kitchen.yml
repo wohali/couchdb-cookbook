@@ -19,7 +19,7 @@ verifier:
 
 platforms:
   - name: centos-6.9
-  - name: centos-7.2
+  - name: centos-7.3
   - name: debian-7.11
   - name: debian-8.7
   - name: ubuntu-12.04
@@ -28,7 +28,11 @@ platforms:
 suites:
   - name: default
     run_list:
+      - recipe[apt::default]
       - recipe[couchdb]
+    verifier:
+      inspec_tests:
+        - test/smoke/inspec
   - name: source
     run_list:
       - recipe[apt::default]
