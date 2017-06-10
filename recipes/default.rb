@@ -25,6 +25,8 @@
 erl_recipe_name = 'erlang'
 include_recipe erl_recipe_name if node['couch_db']['install_erlang']
 
+package "curl"
+
 case node['platform_family']
 when 'rhel'
   group 'couchdb' do
@@ -73,3 +75,4 @@ service 'couchdb' do
   supports [:restart, :status]
   action [:enable, :start]
 end
+

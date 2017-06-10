@@ -17,6 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+package "curl"
+
 if node['platform'] == 'ubuntu' && node['platform_version'].to_f == 8.04
   log "Ubuntu 8.04 does not supply sufficient development libraries via APT to install CouchDB #{node['couch_db']['src_version']} from source."
   return
