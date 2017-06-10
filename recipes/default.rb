@@ -17,7 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#erl_recipe_name = if node['platform'] == 'ubuntu' && node['platform_version'].to_f > 14.99
+# erl_recipe_name = if node['platform'] == 'ubuntu' && node['platform_version'].to_f > 14.99
 #                    'erlang::esl'
 #                  else
 #                    'erlang'
@@ -25,10 +25,15 @@
 erl_recipe_name = 'erlang'
 include_recipe erl_recipe_name if node['couch_db']['install_erlang']
 
-package "curl"
+package 'curl'
 
 case node['platform_family']
 when 'rhel'
+  # TODO: Remove when CouchDB 2.x packages materialise
+  if %w(centos rhel).include?(node['platform'])
+    Chef::Application.fatal!("Unsupported couchdb::default platform #{node['platform']}, packages unavailable :(", 1)
+  end
+
   group 'couchdb' do
     system true
   end
@@ -42,6 +47,11 @@ when 'rhel'
   end
 
   include_recipe 'yum-epel'
+when 'debian'
+  if node['platform'] == 'debian' && node['platform_version'].to_f >= 8.0
+    Chef::Application.fatal!("Unsupported couchdb::default platform #{node['platform']}, packages unavailable :(", 1)
+  end
+
 end
 
 package 'couchdb' do
@@ -66,6 +76,15 @@ directory '/var/lib/couchdb' do
   )
 end
 
+# fix broken init script on ubuntu-12.04
+cookbook_file '/etc/init.d/couchdb' do
+  source 'couchdb-ubuntu-12.04.init'
+  owner 'root'
+  group 'root'
+  mode '0755'
+  only_if { node['platform'] == 'ubuntu' && node['platform_version'].to_f == 12.04 }
+end
+
 service 'couchdb' do
   provider Chef::Provider::Service::Upstart if platform?('ubuntu') && node['platform_version'].to_f >= 13.10
   if platform_family?('rhel', 'fedora')
@@ -75,4 +94,3 @@ service 'couchdb' do
   supports [:restart, :status]
   action [:enable, :start]
 end
-

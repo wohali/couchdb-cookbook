@@ -26,8 +26,15 @@ supports          'debian', '~> 7.0'
 supports          'debian', '~> 8.0'
 supports          'openbsd'
 supports          'freebsd'
-
-%w(amazon centos debian oracle redhat scientific ubuntu zlinux).each do |_os|
-  supports os '~> 6' # requires EPEL Yum Repository
-  supports os '~> 7' # requires EPEL Yum Repository
-end
+supports          'amazon', '~> 6.0' # requires EPEL Yum Repository
+supports          'amazon', '~> 7.0' # requires EPEL Yum Repository
+supports          'centos', '~> 6.0' # requires EPEL Yum Repository
+supports          'centos', '~> 7.0' # requires EPEL Yum Repository
+supports          'oracle', '~> 6.0' # requires EPEL Yum Repository
+supports          'oracle', '~> 7.0' # requires EPEL Yum Repository
+supports          'redhat', '~> 6.0' # requires EPEL Yum Repository
+supports          'redhat', '~> 7.0' # requires EPEL Yum Repository
+supports          'scientific', '~> 6.0' # requires EPEL Yum Repository
+supports          'scientific', '~> 7.0' # requires EPEL Yum Repository
+supports          'zlinux', '~> 6.0' # requires EPEL Yum Repository
+supports          'zlinux', '~> 7.0' # requires EPEL Yum Repository

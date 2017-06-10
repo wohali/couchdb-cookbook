@@ -4,42 +4,47 @@ This file is used to list changes made in each version of the CouchDB cookbook.
 
 v2.5.3
 ------
-Multiple fixes for CentOS, recent Debian/Ubuntu builds
-Prefer /usr/lib64/ over /usr/lib when present
-Store CouchDB UUID into host-specific local.ini file
+* **Final release explicitly targeting CouchDB 1.x.**
+* Multiple fixes for CentOS, recent Debian/Ubuntu builds
+* Prefer /usr/lib64/ over /usr/lib when present
+* Store CouchDB UUID into host-specific local.ini file
+* New database LWRP provider
+* Source downloaded via https (closes #40)
+* Clean up build directory when building from source
+* Fixed init script problem on multiple platforms
+* Documentation received a complete overhaul
+* Many style cleanups for Ruby and Chef 12/13
+* Full support for test-kitchen, rubocop, rake, foodcritic, etc.
+  * Includes basic smoke test
 
 v2.5.2
 ------
-Add nohup to running couch to make it work with Test Kitchen
-adding case for libmozjs package for ubuntu 14.04
-Specify upstart service provider for ubuntu >=13.10
-
+* Add nohup to running couch to make it work with Test Kitchen
+* adding case for libmozjs package for ubuntu 14.04
+* Specify upstart service provider for ubuntu >=13.10
 
 v2.5.1
 ------
-New cookbook maintainer
-Update default version to CouchDB 1.5.0
-Update source download URL to new format
-Fix testkitchen support
-Fix stray "w" in 1.5.0
+* New cookbook maintainer
+* Update default version to CouchDB 1.5.0
+* Update source download URL to new format
+* Fix testkitchen support
+* Fix stray "w" in 1.5.0
 
 
 v2.5.0
 ------
-Porting to use cookbook yum ~> 3.0
-Fixing up style to pass rubocop
-Updating testing bits
-
+* Porting to use cookbook yum ~> 3.0
+* Fixing up style to pass rubocop
+* Updating testing bits
 
 v2.4.8
 ------
-fixing metadata version error. locking to 3.0"
-
+* fixing metadata version error. locking to 3.0
 
 v2.4.6
 ------
-Locking yum dependency to '< 3'
-
+* Locking yum dependency to '< 3'
 
 v2.4.4
 ------
