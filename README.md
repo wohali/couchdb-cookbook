@@ -14,7 +14,9 @@ Tested via Test Kitchen:
 
 * CentOS 6.9, 7.3
 * Debian 7, 8
-* Ubuntu 12.04, 14.04, 16.04
+* Ubuntu 12.04, 14.04
+
+**NOTE** Ubuntu 16.04 (xenial) does not have an old enough version of Erlang available to support CouchDB 1.x! This cookbook will move to support CouchDB 2.x soon, resolving this issue.
 
 ## Cookbooks
 

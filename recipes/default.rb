@@ -17,7 +17,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include_recipe 'erlang' if node['couch_db']['install_erlang']
+#erl_recipe_name = if node['platform'] == 'ubuntu' && node['platform_version'].to_f > 14.99
+#                    'erlang::esl'
+#                  else
+#                    'erlang'
+#                  end
+erl_recipe_name = 'erlang'
+include_recipe erl_recipe_name if node['couch_db']['install_erlang']
 
 case node['platform_family']
 when 'rhel'
@@ -41,7 +47,7 @@ package 'couchdb' do
     'openbsd' => { 'default' => 'apache-couchdb' },
     'gentoo' => { 'default' => 'dev-db/couchdb' },
     'default' => 'couchdb'
-    )
+  )
 end
 
 couchdb_config '/etc/couchdb'
@@ -59,7 +65,7 @@ directory '/var/lib/couchdb' do
 end
 
 service 'couchdb' do
-  provider Chef::Provider::Service::Upstart if platform?("ubuntu") && node["platform_version"].to_f >= 13.10
+  provider Chef::Provider::Service::Upstart if platform?('ubuntu') && node['platform_version'].to_f >= 13.10
   if platform_family?('rhel', 'fedora')
     start_command '/sbin/service couchdb start &> /dev/null'
     stop_command '/sbin/service couchdb stop &> /dev/null'

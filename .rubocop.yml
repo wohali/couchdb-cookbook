@@ -1,8 +1,9 @@
-Encoding:
-  Enabled: false
+AllCops:
+  Exclude:
+    - bin/*
 
-LineLength:
+Metrics/LineLength:
   Max: 200
 
-HashSyntax:
-  EnforcedStyle: hash_rockets
+Style/SpaceBeforeFirstArg:
+  Enabled: false

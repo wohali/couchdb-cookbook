@@ -17,10 +17,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-default['couch_db']['src_checksum']   = 'b54e643f3ca5f046cfd2f329a001efeaae8a3094365fa6c1cb5dcf68c1b25ccd'
-default['couch_db']['src_version']    = '1.5.0'
+default['couch_db']['src_checksum']   = '5a601b173733ce3ed31b654805c793aa907131cd70b06d03825f169aa48c8627'
+default['couch_db']['src_version']    = '1.6.1'
 default['couch_db']['src_mirror']     = "http://archive.apache.org/dist/couchdb/source/#{node['couch_db']['src_version']}/apache-couchdb-#{node['couch_db']['src_version']}.tar.gz"
 default['couch_db']['install_erlang'] = true
+# CouchDB 1.x doesn't support Erlang newer than 17.x!
+node.set['erlang']['esl']['version'] = '17.5.3'
 
 # Attributes below are used to configure your couchdb instance.
 # These defaults were extracted from this url:
@@ -35,7 +37,7 @@ default['couch_db']['config']['couchdb']['os_process_timeout'] = 5000 # In ms (5
 default['couch_db']['config']['couchdb']['max_dbs_open'] = 100
 default['couch_db']['config']['couchdb']['delayed_commits'] = true
 default['couch_db']['config']['couchdb']['batch_save_size'] = 1000
-default['couch_db']['config']['couchdb']['batch_save_interval'] = 1000  # In ms (1 second)
+default['couch_db']['config']['couchdb']['batch_save_interval'] = 1000 # In ms (1 second)
 
 default['couch_db']['config']['httpd']['port'] = 5984
 default['couch_db']['config']['httpd']['bind_address'] = '127.0.0.1'

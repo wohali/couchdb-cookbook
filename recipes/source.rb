@@ -25,6 +25,7 @@ end
 couchdb_tar_gz = File.join(Chef::Config[:file_cache_path], '/', "apache-couchdb-#{node['couch_db']['src_version']}.tar.gz")
 compile_flags = ''
 dev_pkgs = []
+env_vars = {}
 
 case node['platform_family']
 when 'debian'
@@ -32,32 +33,32 @@ when 'debian'
   dev_pkgs << 'libicu-dev'
   dev_pkgs << 'libcurl4-openssl-dev'
   dev_pkgs << value_for_platform(
-    'debian' => { 
-      '~> 7.0' => 'libmozjs185-dev',
-      'default' => 'libmozjs-dev'
+    'debian' => {
+      '< 7.0' => 'libmozjs-dev',
+      'default' => 'libmozjs185-dev'
     },
     'ubuntu' => {
-      '10.04' => 'xulrunner-dev',
-      '14.04' => 'libmozjs185-dev',
-      '16.04' => 'libmozjs185-dev',
-      'default' => 'libmozjs-dev'
+      '12.04' => 'libmozjs-dev',
+      'default' => 'libmozjs185-dev'
     }
   )
 
-when 'rhel', 'fedora'
+when 'rhel'
   include_recipe 'yum-epel'
 
-  dev_pkgs += %w{
+  dev_pkgs += %w(
     which make gcc gcc-c++ js-devel libtool
-    libicu-devel openssl-devel curl-devel
-  }
+    libicu-devel openssl-devel libcurl-devel libcurl
+  )
+
+  env_vars['PKG_CONFIG_PATH'] = '/usr/lib/pkgconfig:/usr/lib64/pkgconfig'
 
   # awkwardly tell ./configure where to find Erlang's headers
-  if Dir.exists?("/usr/lib64/erlang/usr/include")
-    compile_flags = "--with-erlang=/usr/lib64/erlang/usr/include"
-  else
-    compile_flags = "--with-erlang=/usr/lib/erlang/usr/include"
-  end
+  compile_flags = if Dir.exist?('/usr/lib64')
+                    '--with-erlang=/usr/lib64/erlang/usr/include'
+                  else
+                    '--with-erlang=/usr/lib/erlang/usr/include'
+                  end
 end
 
 include_recipe 'erlang' if node['couch_db']['install_erlang']
@@ -73,10 +74,16 @@ end
 
 bash "install couchdb #{node['couch_db']['src_version']}" do
   cwd Chef::Config[:file_cache_path]
+  environment env_vars
   code <<-EOH
+    set -e
     tar -zxf #{couchdb_tar_gz}
-    cd apache-couchdb-#{node['couch_db']['src_version']} && ./configure #{compile_flags} && make && make install
-    rm -rf #{Chef::Config[:file_cache_path]}/#{couchdb_tar_gz} #{Chef::Config[:file_cache_path]}/apache-couchdb-#{node['couch_db']['src_version']}
+    cd apache-couchdb-#{node['couch_db']['src_version']}
+    ./configure #{compile_flags}
+    make
+    make install
+    cd ..
+    rm -rf #{couchdb_tar_gz} apache-couchdb-#{node['couch_db']['src_version']}
   EOH
   not_if "test -f /usr/local/bin/couchdb && /usr/local/bin/couchdb -V | grep 'Apache CouchDB #{node['couch_db']['src_version']}'"
 end
@@ -84,14 +91,15 @@ end
 user 'couchdb' do
   home '/usr/local/var/lib/couchdb'
   comment 'CouchDB Administrator'
-  supports :manage_home => false
+  manage_home false
   system true
 end
 
-%w{ var/lib/couchdb var/log/couchdb var/run/couchdb etc/couchdb }.each do |dir|
+%w(var/lib/couchdb var/log/couchdb var/run/couchdb etc/couchdb etc/couchdb/local.d).each do |dir|
   directory "/usr/local/#{dir}" do
     owner 'couchdb'
     group 'couchdb'
+    recursive true
     mode '0770'
   end
 end

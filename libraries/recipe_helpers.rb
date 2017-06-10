@@ -1,13 +1,15 @@
+# rubocop:disable Metrics/AbcSize
 class Chef
+  # LWRP to write CouchDB configuration local.ini file.
   class Recipe
-    def couchdb_config(base_dir)
+    def couchdb_config(base_dir) # rubocop:disable Metrics/MethodLength
       template File.join(base_dir, 'local.ini') do
         source 'local.ini.erb'
         owner 'couchdb'
         group 'couchdb'
-        mode 0660
+        mode '0660'
         variables(
-          :config => node['couch_db']['config']
+          config: node['couch_db']['config']
         )
         notifies :restart, 'service[couchdb]'
       end
@@ -17,7 +19,7 @@ class Chef
       file File.join(base_dir, 'local.d', "~#{runtime_config_name}.ini") do
         owner 'couchdb'
         group 'couchdb'
-        mode 0660
+        mode '0660'
         notifies :restart, 'service[couchdb]'
       end
     end

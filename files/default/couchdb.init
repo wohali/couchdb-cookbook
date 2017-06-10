@@ -95,24 +95,15 @@ start_couchdb () {
 
 stop_couchdb () {
     # Stop the running Apache CouchDB process.
-
-    command="$COUCHDB -d"
-    if test -n "$COUCHDB_OPTIONS"; then
-        command="$command $COUCHDB_OPTIONS"
-    fi
-    if test -n "$COUCHDB_USER"; then
-        if su $COUCHDB_USER -c "$command" > /dev/null; then
-            return $SCRIPT_OK
-        else
-            return $SCRIPT_ERROR
-        fi
+    retval=0
+    if ! $COUCHDB -s >/dev/null 2>&1; then
+        log_daemon_msg "already stopped"
     else
-        if $command > /dev/null; then
-            return $SCRIPT_OK
-        else
-            return $SCRIPT_ERROR
-        fi
+        pkill -u $COUCHDB_USER beam\*
+        retval=$?
+        [ $retval -eq 0 ] && return $SCRIPT_OK || return $SCRIPT_ERROR
     fi
+    return $retval
 }
 
 display_status () {
