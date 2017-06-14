@@ -2,6 +2,11 @@ CouchDB Cookbook CHANGELOG
 ==========================
 This file is used to list changes made in each version of the CouchDB cookbook.
 
+v3.0.0
+------
+* **Supports CouchDB 2.0+**
+  * If CouchDB 1.x is required, use v2.5.3 of this cookbook.
+
 v2.5.3
 ------
 * **Final release explicitly targeting CouchDB 1.x.**
@@ -30,7 +35,6 @@ v2.5.1
 * Update source download URL to new format
 * Fix testkitchen support
 * Fix stray "w" in 1.5.0
-
 
 v2.5.0
 ------
