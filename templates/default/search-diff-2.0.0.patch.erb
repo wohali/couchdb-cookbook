@@ -1,0 +1,153 @@
+diff -Naurb apache-couchdb-2.0.0-orig/rebar.config.script apache-couchdb-2.0.0/rebar.config.script
+--- apache-couchdb-2.0.0-orig/rebar.config.script	2016-09-12 05:34:26.000000000 -0400
++++ apache-couchdb-2.0.0/rebar.config.script	2017-06-14 23:35:57.635549000 -0400
+@@ -56,7 +56,8 @@
+ {rexi,             "rexi",             "a327b7dbeb2b0050f7ca9072047bf8ef2d282833"},
+ {snappy,           "snappy",           "a728b960611d0795025de7e9668d06b9926c479d"},
+ {setup,            "setup",            "b9e1f3b5d5a78a706abb358e17130fb7344567d2"},
+-{meck,             "meck",             {tag, "0.8.2"}}
++{meck,             "meck",             {tag, "0.8.2"}},
++{dreyfus, {url, "<% dreyfus_repo_url %>"}, "<% dreyfus_repo_tag %>"}
+ ],
+ 
+ BaseUrl = "https://git-wip-us.apache.org/repos/asf/",
+diff -Naurb apache-couchdb-2.0.0-orig/rel/apps/couch_epi.config apache-couchdb-2.0.0/rel/apps/couch_epi.config
+--- apache-couchdb-2.0.0-orig/rel/apps/couch_epi.config	2016-09-12 05:34:26.000000000 -0400
++++ apache-couchdb-2.0.0/rel/apps/couch_epi.config	2017-06-14 23:37:50.863548996 -0400
+@@ -17,5 +17,6 @@
+     global_changes_epi,
+     mango_epi,
+     mem3_epi,
+-    setup_epi
++    setup_epi,
++    dreyfus_epi
+ ]}.
+diff -Naurb apache-couchdb-2.0.0-orig/rel/reltool.config apache-couchdb-2.0.0/rel/reltool.config
+--- apache-couchdb-2.0.0-orig/rel/reltool.config	2016-09-12 05:34:26.000000000 -0400
++++ apache-couchdb-2.0.0/rel/reltool.config	2017-06-14 23:37:37.287549007 -0400
+@@ -56,7 +56,8 @@
+         oauth,
+         rexi,
+         setup,
+-        snappy
++        snappy,
++        dreyfus
+     ]},
+     {rel, "start_clean", "", [kernel, stdlib]},
+     {boot_rel, "couchdb"},
+@@ -110,7 +111,8 @@
+     {app, oauth, [{incl_cond, include}]},
+     {app, rexi, [{incl_cond, include}]},
+     {app, setup, [{incl_cond, include}]},
+-    {app, snappy, [{incl_cond, include}]}
++    {app, snappy, [{incl_cond, include}]},
++    {app, dreyfus, [{incl_cond, include}]}
+ ]}.
+ 
+ {overlay_vars, "couchdb.config"}.
+diff -Naurb apache-couchdb-2.0.0-orig/share/server/dreyfus.js apache-couchdb-2.0.0/share/server/dreyfus.js
+--- apache-couchdb-2.0.0-orig/share/server/dreyfus.js	1969-12-31 19:00:00.000000000 -0500
++++ apache-couchdb-2.0.0/share/server/dreyfus.js	2017-06-14 23:38:17.787549001 -0400
+@@ -0,0 +1,62 @@
++// Licensed under the Apache License, Version 2.0 (the "License"); you may not
++// use this file except in compliance with the License. You may obtain a copy of
++// the License at
++//
++//   http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
++// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
++// License for the specific language governing permissions and limitations under
++// the License.
++
++var Dreyfus = (function() {
++
++  var index_results = []; // holds temporary emitted values during index
++
++  function handleIndexError(err, doc) {
++    if (err == "fatal_error") {
++      throw(["error", "map_runtime_error", "function raised 'fatal_error'"]);
++    } else if (err[0] == "fatal") {
++      throw(err);
++    }
++    var message = "function raised exception " + err.toSource();
++    if (doc) message += " with doc._id " + doc._id;
++    log(message);
++  };
++
++  return {
++    index: function(name, value, options) {
++      if (typeof name !== 'string') {
++        throw({name: 'TypeError', message: 'name must be a string not ' + typeof name});
++      }
++      if (name.substring(0, 1) === '_') {
++        throw({name: 'ReservedName', message: 'name must not start with an underscore'});
++      }
++      if (typeof value !== 'string' && typeof value !== 'number' && typeof value !== 'boolean') {
++        throw({name: 'TypeError', message: 'value must be a string, a number or boolean not ' + typeof value});
++      }
++      if (options && typeof options !== 'object') {
++        throw({name: 'TypeError', message: 'options must be an object not ' + typeof options});
++      }
++      index_results.push([name, value, options || {}]);
++    },
++
++    indexDoc: function(doc) {
++      Couch.recursivelySeal(doc);
++      var buf = [];
++      for each (fun in State.funs) {
++        index_results = [];
++        try {
++          fun(doc);
++          buf.push(index_results);
++        } catch (err) {
++          handleIndexError(err, doc);
++          buf.push([]);
++        }
++      }
++      print(JSON.stringify(buf));
++    }
++
++  }
++})();
+diff -Naurb apache-couchdb-2.0.0-orig/share/server/loop.js apache-couchdb-2.0.0/share/server/loop.js
+--- apache-couchdb-2.0.0-orig/share/server/loop.js	2016-09-12 05:34:26.000000000 -0400
++++ apache-couchdb-2.0.0/share/server/loop.js	2017-06-14 23:39:52.787548995 -0400
+@@ -25,6 +25,7 @@
+     sandbox.send = Render.send;
+     sandbox.getRow = Render.getRow;
+     sandbox.isArray = isArray;
++    sandbox.index = Dreyfus.index;
+   } catch (e) {
+     var sandbox = {};
+   }
+@@ -115,7 +116,8 @@
+     "add_lib"  : State.addLib,
+     "map_doc"  : Views.mapDoc,
+     "reduce"   : Views.reduce,
+-    "rereduce" : Views.rereduce
++    "rereduce" : Views.rereduce,
++    "index_doc": Dreyfus.indexDoc
+   };
+   function handleError(e) {
+     var type = e[0];
+diff -Naurb apache-couchdb-2.0.0-orig/support/build_js.escript apache-couchdb-2.0.0/support/build_js.escript
+--- apache-couchdb-2.0.0-orig/support/build_js.escript	2016-09-12 05:34:26.000000000 -0400
++++ apache-couchdb-2.0.0/support/build_js.escript	2017-06-14 23:38:51.759549005 -0400
+@@ -26,6 +26,7 @@
+                "share/server/state.js",
+                "share/server/util.js",
+                "share/server/validate.js",
++               "share/server/dreyfus.js",
+                "share/server/views.js",
+                "share/server/loop.js"],
+ 
+@@ -36,6 +37,7 @@
+                    "share/server/state.js",
+                    "share/server/util.js",
+                    "share/server/validate.js",
++                   "share/server/dreyfus.js",
+                    "share/server/views.js",
+                    "share/server/coffee-script.js",
+                    "share/server/loop.js"],
