@@ -25,12 +25,12 @@ verifier:
   name: inspec
 
 platforms:
-  - name: centos-6.9
+#  - name: centos-6.9
   - name: centos-7.3
   - name: debian-7.11
   - name: debian-8.7
-  - name: ubuntu-12.04
   - name: ubuntu-14.04
+  - name: ubuntu-16.04
 
 suites:
   - name: default
@@ -47,6 +47,13 @@ suites:
     verifier:
       inspec_tests:
         - test/smoke/inspec
+  - name: search
+    run_list:
+      - recipe[apt::default]
+      - recipe[couchdb-wrapper-test::one-node-with-search]
+    verifier:
+      inspec_tests:
+        - test/searchsmoke/inspec
   - name: threenodes
     run_list:
       - recipe[apt::default]

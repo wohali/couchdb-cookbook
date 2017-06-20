@@ -19,6 +19,8 @@ depends           'erlang'
 depends           'nodejs'
 depends           'poise-python'
 depends           'yum-epel'
+depends           'java'  # only for full-text search
+depends           'maven' # only for full-text search
 
 recipe            'couchdb::default', 'Installs and configures CouchDB package'
 recipe            'couchdb::source', 'Installs and configures CouchDB from source'

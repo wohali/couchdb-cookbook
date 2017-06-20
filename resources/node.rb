@@ -45,9 +45,11 @@ property :uuid, String, default: lazy { ::SecureRandom.uuid.tr('-', '') }
 property :cookie, String, default: 'monster'
 property :type, String, default: 'clustered'
 property :loglevel, String, default: 'info'
-# TODO: #property :fulltext, [true, false], default: false
+property :fulltext, [true, false], default: false
 
 action :create do
+  node.default['couch_db']['enable_search'] = true if fulltext
+
   # install prerequisites, and compile CouchDB
   include_recipe 'couchdb::prereq'
   include_recipe 'couchdb::compile'
@@ -71,13 +73,13 @@ action :create do
 
   bash 'install_couchdb' do
     code <<-EOH
-      cp -R #{node['couchdb']['extract_path']}/rel/couchdb #{couchpath}
+      cp -R #{node['couch_db']['extract_path']}/rel/couchdb #{couchpath}
     EOH
     not_if { ::File.directory?(couchpath) }
   end
 
   # create directories for node-specific config, data, logs
-  %w(#{datapath} #{logpath}).each do |path|
+  [datapath, logpath].each do |path|
     directory path do
       owner 'couchdb'
       group 'couchdb'
@@ -129,6 +131,7 @@ action :create do
       cookie: cookie,
       address: address
     )
+    notifies :restart, "service[couchdb-#{node_name}]", :delayed
   end
 
   # create local.d ini file
@@ -146,6 +149,21 @@ action :create do
       clusterbindaddress: bind_address,
       localport: local_port
     )
+    notifies :restart, "service[couchdb-#{node_name}]", :delayed
+  end
+
+  # create local.d ini file
+  template "#{couchpath}/etc/local.d/20-dreyfus.ini" do
+    cookbook 'couchdb'
+    source '20-dreyfus.ini.erb'
+    mode '0640'
+    owner 'couchdb'
+    group 'couchdb'
+    variables(
+      clouseauname: "clouseau-#{node_name}"
+    )
+    only_if { fulltext }
+    notifies :restart, "service[couchdb-#{node_name}]", :delayed
   end
 
   # create_if_missing specified to avoid fighting over a hashed admin password
@@ -163,6 +181,7 @@ action :create do
       adminpassword: admin_password
     )
     action :create_if_missing
+    notifies :restart, "service[couchdb-#{node_name}]", :delayed
   end
 
   # TODO: Bring back couch_config template/provider here
@@ -245,6 +264,14 @@ action :create do
     action :nothing
     only_if { type == 'standalone' }
     not_if "curl http://#{frontip}:#{port}/_users"
+  end
+
+  # now that CouchDB is running, maybe create & start clouseau if requested
+  couchdb_clouseau "clouseau-#{node_name}" do
+    couch_node_name node_name
+    clouseau_node_name "clouseau-#{node_name}"
+    cookie new_resource.cookie
+    only_if { fulltext }
   end
 end
 
