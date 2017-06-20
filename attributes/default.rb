@@ -36,3 +36,14 @@ default['couch_db']['dreyfus']['repo_url'] = 'https://github.com/cloudant-labs/d
 default['couch_db']['dreyfus']['repo_tag'] = 'd83888154be546b2826b3346a987089a64728ee5'
 default['couch_db']['clouseau']['repo_url'] = 'https://github.com/cloudant-labs/clouseau'
 default['couch_db']['clouseau']['repo_tag'] = '32b2294d40c5e738b52b3d57d2fb006456bc18cd'
+
+# Java/maven overrides for full-text search
+default['java']['install_flavor'] = 'openjdk'
+default['java']['jdk_version'] = '6'
+force_default['maven']['version'] = '3.2.5'
+force_default['maven']['url'] = 'https://dist.apache.org/repos/dist/release/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.tar.gz'
+force_default['maven']['checksum'] = '8c190264bdf591ff9f1268dc0ad940a2726f9e958e367716a09b8aaa7e74a755'
+force_default['maven']['m2_home'] = '/opt/maven'
+
+# Set to true by resource provider when run
+default['couch_db']['enable_search'] = false
