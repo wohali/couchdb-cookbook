@@ -1,9 +1,0 @@
-AllCops:
-  Exclude:
-    - bin/*
-
-Metrics/LineLength:
-  Max: 200
-
-Style/SpaceBeforeFirstArg:
-  Enabled: false

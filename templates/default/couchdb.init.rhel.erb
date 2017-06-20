@@ -1,0 +1,132 @@
+#!/bin/sh
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+#
+# chkconfig: - 26 74
+# description: Starts and stops the CouchDB daemon that handles \
+#              all database requests.
+#
+### BEGIN INIT INFO
+# Provides:          couchdb
+# Required-Start:    $remote_fs $syslog $network
+# Required-Stop:     $remote_fs $syslog $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Apache CouchDB, a RESTful document oriented database
+# Description:       Apache CouchDB is a distributed, fault-tolerant and schema-free
+#                    document-oriented database accessible via a RESTful HTTP/JSON API. Among other
+#                    features, it provides robust, incremental replication with bi-directional
+#                    conflict detection and resolution, and is queryable and indexable using a
+#                    table-oriented view engine with JavaScript acting as the default view
+#                    definition language.
+### END INIT INFO
+# Author: CouchDB Developers <dev@couchdb.apache.org>
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+COUCHPATH=<%= @couchpath %>
+prog=couchdb
+exec=$COUCHPATH/bin/$prog
+
+COUCHDB_USER=couchdb
+COUCHDB_PIDFILE=/var/run/$prog.pid
+
+[ -e /etc/sysconfig/$prog ] && . /etc/sysconfig/$prog
+
+PID="$(pgrep -u couchdb beam* || true)"
+LOCKFILE=/var/lock/subsys/$prog
+
+start() {
+    [ -x $exec ] || exit 5
+    echo -n $"Starting $prog: "
+    status_q && echo -n "already running" && warning && echo && exit 0
+    daemon --user $COUCHDB_USER \
+        --pidfile $COUCHDB_PIDFILE \
+        nohup $exec $COUCHDB_OPTIONS >/dev/null 2>&1 &
+    retval=$?
+    [ $retval -eq 0 ] && touch $LOCKFILE && success || failure
+    echo
+    return $retval
+}
+
+stop() {
+    echo -n $"Stopping $prog: "
+    retval=0
+    if ! status_q ; then
+	echo -n "already stopped" && warning
+    else
+        pkill -u $COUCHDB_USER beam\*
+        retval=$?
+        [ $retval -eq 0 ] && rm -f $lockfile && success || failure
+    fi
+    echo
+    return $retval
+}
+
+restart() {
+    stop
+    start
+}
+
+reload() {
+    restart
+}
+
+usage() {
+    echo "Usage: couchdb {start|stop|status|restart|force-reload}" >&2
+}
+
+status() {
+    pgrep -u couchdb beam* > /dev/null && status="$?" || status="$?"
+    if [ "$status" = 0 ]; then
+        echo "$prog is running"
+        return 0
+    elif [ "$status" = 4 ]; then
+        echo "could not access PID file for $prog"
+        return $status
+    else
+        echo "$prog is not running"
+        return $status
+    fi
+}
+
+status_q() {
+    status >/dev/null 2>&1
+}
+
+case "$1" in
+    start)
+        start
+    ;;
+    stop)
+        stop
+    ;;
+    status)
+        status
+    ;;
+    reload)
+        usage
+        exit 3
+    ;;
+    force-reload)
+        reload
+    ;;
+    restart)
+        restart
+    ;;
+    '')
+        usage
+        exit 3
+    ;;
+esac
+exit 0

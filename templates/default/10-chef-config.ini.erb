@@ -1,0 +1,19 @@
+#
+# CouchDB 10-chef-config.ini file - managed by Chef
+# EDITS TO THIS FILE WILL BE LOST!!!
+#
+[log]
+writer = file
+file = <%= @logpath %>/couchdb.log
+level = <%= @loglevel %>
+
+[couchdb]
+data_dir = <%= @datapath %>
+view_index_dir = <%= @datapath %>
+
+[chttpd]
+port = <%= @clusterport %>
+bind_address = <%= @clusterbindaddress %>
+
+[httpd]
+port = <%= @localport %>

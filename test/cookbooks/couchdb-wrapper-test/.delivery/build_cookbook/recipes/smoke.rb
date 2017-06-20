@@ -1,7 +1,8 @@
 #
-# Author:: Joan Touzet <wohali@apache.org>
-# Cookbook Name:: couchdb
-# Recipe:: source
+# Cookbook:: build_cookbook
+# Recipe:: smoke
+#
+# Copyright:: 2017, The Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,5 +16,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include_recipe 'couchdb::prereq'
-include_recipe 'couchdb::compile_install'
+include_recipe 'delivery-truck::smoke'

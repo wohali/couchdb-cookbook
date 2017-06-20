@@ -1,13 +1,17 @@
 language: ruby
-bundler_args: --without development integration
+bundler_args: --without guard integration
 rvm:
-  - 1.9.3
-  - 2.0.0
+  - 2.1.9
+  - 2.3.1
+  - 2.4.1
 before_install:
   - "echo 'gem: --no-ri --no-rdoc' > ~/.gemrc"
 before_script:
-  - bundle exec berks install
+  - bundle install
 script:
-  - bundle exec foodcritic -f any . --tags ~FC005
-  - bundle exec rubocop
-  - bundle exec rspec --color --format progress
+  - bundle exec $TARGET
+env:
+  matrix:
+    - TARGET="rake"
+#    - TARGET="kitchen test source-centos-73"
+#    - TARGET="kitchen test threenodes-centos-73"

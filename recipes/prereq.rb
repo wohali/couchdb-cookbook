@@ -29,14 +29,14 @@ user 'couchdb' do
   comment 'CouchDB Administrator'
   gid 'couchdb'
   shell '/bin/bash'
-  home '/opt/couchdb'
+  home '/var/lib/couchdb'
   manage_home true
   system true
   action [:create, :lock]
 end
 
 # Symlinks to these under /opt/couchdb will be created after installation
-%w(/opt/couchdb /var/lib/couchdb /var/log/couchdb).each do |dir|
+%w(/var/lib/couchdb /var/log/couchdb).each do |dir|
   directory dir do
     owner 'couchdb'
     group 'couchdb'

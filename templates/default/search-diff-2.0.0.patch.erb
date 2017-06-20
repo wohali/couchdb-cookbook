@@ -7,7 +7,7 @@ diff -Naurb apache-couchdb-2.0.0-orig/rebar.config.script apache-couchdb-2.0.0/r
  {setup,            "setup",            "b9e1f3b5d5a78a706abb358e17130fb7344567d2"},
 -{meck,             "meck",             {tag, "0.8.2"}}
 +{meck,             "meck",             {tag, "0.8.2"}},
-+{dreyfus, {url, "<% dreyfus_repo_url %>"}, "<% dreyfus_repo_tag %>"}
++{dreyfus, {url, "<%= @dreyfus_repo_url %>"}, "<%= @dreyfus_repo_tag %>"}
  ],
  
  BaseUrl = "https://git-wip-us.apache.org/repos/asf/",
