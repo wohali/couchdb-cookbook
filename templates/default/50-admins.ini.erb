@@ -1,0 +1,10 @@
+#
+# CouchDB 50-admins.ini file - created by Chef
+# Once this file has been created, Chef no longer manages it.
+# Yes, local edits in this file WILL be preserved!
+#
+[couchdb]
+uuid = <%= @uuid %>
+
+[admins]
+<%= @adminuser %> = <%= @adminpassword %>

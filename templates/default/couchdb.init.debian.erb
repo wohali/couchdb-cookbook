@@ -1,0 +1,160 @@
+#!/bin/sh
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+### BEGIN INIT INFO
+# Provides:          couchdb
+# Required-Start:    $remote_fs $syslog $network
+# Required-Stop:     $remote_fs $syslog $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Apache CouchDB, a RESTful document oriented database
+# Description:       Apache CouchDB is a distributed, fault-tolerant and schema-free
+#                    document-oriented database accessible via a RESTful HTTP/JSON API. Among other
+#                    features, it provides robust, incremental replication with bi-directional
+#                    conflict detection and resolution, and is queryable and indexable using a
+#                    table-oriented view engine with JavaScript acting as the default view
+#                    definition language.
+### END INIT INFO
+# Author: CouchDB Developers <dev@couchdb.apache.org>
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+export PATH
+
+. /lib/lsb/init-functions
+
+PID="$(pgrep -u couchdb beam* || true)"
+PIDFILE=/var/run/couchdb.pid
+NAME="couchdb"
+DESC="Apache CouchDB"
+COUCHPATH=<%= @couchpath %>
+DAEMON=$COUCHPATH/bin/couchdb
+START_ARGS="--chuid couchdb:couchdb --chdir $COUCHPATH --background"
+STOP_ARGS="--pid $PID"
+
+do_usage() {
+    echo "Usage: couchdb {start|stop|status|restart|try-restart|force-reload}" >&2
+}
+
+do_start_cmd() {
+    start-stop-daemon --start --quiet ${PIDFILE:+--pidfile ${PIDFILE}} \
+        $START_ARGS \
+        --startas $DAEMON --name $NAME --exec $DAEMON --test > /dev/null \
+        || return 1
+    start-stop-daemon --start --quiet ${PIDFILE:+--pidfile ${PIDFILE}} \
+        $START_ARGS \
+        --startas $DAEMON --name $NAME --exec $DAEMON -- $DAEMON_ARGS \
+        || return 2
+}
+
+do_start() {
+    [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
+    do_start_cmd
+    case "$?" in
+        0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+        2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+    esac
+}
+
+do_stop_cmd() {
+    RETVAL=2
+    if [ ! -z "$PID" ]; then
+        start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 \
+            --pid $PID
+        RETVAL="$?"
+        [ "$RETVAL" = 2 ] && return 2
+    fi
+    return $RETVAL
+}
+
+do_stop() {
+    [ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
+    do_stop_cmd
+    case "$?" in
+        0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+        2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+    esac
+}
+
+do_restart() {
+    [ "$VERBOSE" != no ] && log_daemon_msg "Restarting $DESC" "$NAME"
+    do_stop_cmd
+    do_start_cmd
+    case "$?" in
+        0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+        2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+    esac
+}
+
+do_force_reload() {
+    do_restart
+}
+
+do_status() {
+    pgrep -u couchdb beam* > /dev/null && status="$?" || status="$?"
+    if [ "$status" = 0 ]; then
+        log_success_msg "$NAME is running"
+        return 0
+    elif [ "$status" = 4 ]; then
+        log_failure_msg "could not access PID file for $NAME"
+        return $status
+    else
+        log_failure_msg "$NAME is not running"
+        return $status
+    fi
+
+}
+
+if [ "$DEBUG" = "true" ] ; then
+    set -x
+fi
+
+# Exit if the package is not installed
+if [ none != "$DAEMON" ] && [ ! -x "$DAEMON" ] ; then
+    exit 0
+fi
+
+case "$1" in
+    start)
+        do_start
+    ;;
+    stop)
+        do_stop
+    ;;
+    status)
+        do_status
+    ;;
+    reload)
+        do_usage
+        exit 3
+    ;;
+    force-reload)
+        do_force_reload
+    ;;
+    restart)
+        do_restart
+    ;;
+    try-restart)
+        log_daemon_msg "Trying to restart $DESC" "$NAME"
+        if do_status > /dev/null 2>&1 ; then
+            do_restart
+            log_end_msg $?
+        else
+            log_progress_msg "is not running."
+            log_end_msg 1
+        fi
+    ;;
+    '')
+        do_usage
+        exit 3
+    ;;
+esac
+exit 0

@@ -1,5 +1,7 @@
 ---
+# TODO: move to Docker a la https://github.com/ferrarimarco/ansible-role-virtualbox
 driver:
+  cachier: true
   name: vagrant
   customize:
     cableconnected1: 'on'
@@ -11,7 +13,12 @@ driver_config:
 
 provisioner:
   name: chef_zero
-# Uncomment for debug purposes
+  cookbook_files_glob: '**/*'
+  client_rb:
+    cookbook_path:
+      - /tmp/kitchen/cookbooks
+      - /tmp/kitchen/cookbooks/couchdb/test/cookbooks
+# Uncomment for great debug
 #  log_level: debug
 
 verifier:
@@ -36,8 +43,14 @@ suites:
   - name: source
     run_list:
       - recipe[apt::default]
-      - recipe[build-essential]
-      - recipe[couchdb::source]     
+      - recipe[couchdb-wrapper-test::one-node-from-source]
     verifier:
       inspec_tests:
         - test/smoke/inspec
+  - name: threenodes
+    run_list:
+      - recipe[apt::default]
+      - recipe[couchdb-wrapper-test::three-nodes-from-source]
+    verifier:
+      inspec_tests:
+        - test/threesmoke/inspec

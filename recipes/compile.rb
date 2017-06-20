@@ -1,7 +1,7 @@
 #
 # Author:: Joan Touzet <wohali@apache.org>
 # Cookbook Name:: couchdb
-# Recipe:: compile_install
+# Recipe:: compile
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 # limitations under the License.
 =begin
 #<
-Downloads, compiles and installs CouchDB from source.
+Downloads and compiles CouchDB from source.
 #>
 =end
 
-couchdb_tar_gz = File.join(Chef::Config[:file_cache_path], "apache-couchdb-#{node['couch_db']['src_version']}.tar.gz")
-extract_path = File.join(Chef::Config[:file_cache_path], "apache-couchdb-#{node['couch_db']['src_version']}")
+couchdb_tar_gz = "/usr/src/archives/apache-couchdb-#{node['couch_db']['src_version']}.tar.gz"
+node.default['couchdb']['extract_path'] = "/usr/src/apache-couchdb-#{node['couch_db']['src_version']}"
 env_vars = {}
 
 case node['platform_family']
@@ -29,17 +29,25 @@ when 'rhel'
   env_vars['PKG_CONFIG_PATH'] = '/usr/lib/pkgconfig:/usr/lib64/pkgconfig'
 end
 
+directory '/usr/src/archives' do
+  owner 'root'
+  group 'root'
+  mode '0755'
+  recursive true
+  action :create
+end
+
 remote_file couchdb_tar_gz do
-  checksum node['couch_db']['src_checksum']
   source node['couch_db']['src_mirror']
+  checksum node['couch_db']['src_checksum']
   notifies :run, 'bash[extract_tarball]', :immediately
 end
 
 bash 'extract_tarball' do
-  cwd Chef::Config[:file_cache_path]
+  cwd '/usr/src'
   code <<-EOH
     set -e
-    rm -rf #{extract_path}
+    rm -rf #{node['couchdb']['extract_path']}
     tar -zxf #{couchdb_tar_gz}
   EOH
   action :nothing
@@ -47,32 +55,15 @@ bash 'extract_tarball' do
 end
 
 bash 'compile_couchdb' do
-  cwd extract_path
+  cwd node['couchdb']['extract_path']
   code <<-EOH
     set -e
     ./configure #{node['couch_db']['configure_flags']}
     make release
     # Remove to-be eclipsed paths
+    mkdir rel/couchdb/etc/local.d rel/couchdb/etc/default.d || true
     rm -rf rel/couchdb/data rel/couchdb/var/log
   EOH
   action :nothing
   notifies :run, 'bash[install_couchdb]', :immediately
-end
-
-bash 'install_couchdb' do
-  code <<-EOH
-    cp -R #{extract_path}/rel/couchdb /opt
-    # cleanup after ourselves
-    rm -rf #{extract_path}
-  EOH
-  action :nothing
-end
-
-# setup symlinks to well-recognized places
-link '/opt/couchdb/data' do
-  to '/var/lib/couchdb'
-end
-
-link '/opt/couchdb/var/log' do
-  to '/var/log/couchdb'
 end

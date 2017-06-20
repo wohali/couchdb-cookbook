@@ -1,6 +1,11 @@
 source 'https://rubygems.org'
 
+gem 'rake', '10.5.0'
+gem 'chef'
+gem 'test-kitchen', '1.15.0'
 gem 'knife-cookbook-doc'
 gem 'redcarpet'
 gem 'stove'
 gem 'yard-redcarpet-ext'
+gem 'cookstyle'
+gem 'foodcritic'

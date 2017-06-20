@@ -1,35 +1,33 @@
-Description
-===========
+# Description
 
-Installs and configures CouchDB. Optionally can install CouchDB from sources.
+Installs and configures Apache CouchDB 2.x from source.
 
-Requirements
-============
+# Requirements
 
-Requires a platform that can install Erlang from distribution packages.
+Requires a platform that can install Erlang from distribution packages
+provided by Erlang Solutions (`erlang::esl` recipe is used.)
 
 ## Platform
 
 Tested via Test Kitchen:
 
-* CentOS 6.9, 7.3
-* Debian 7, 8
-* Ubuntu 12.04, 14.04
-
-**NOTE** Ubuntu 16.04 (xenial) does not have an old enough version of Erlang
-available to support CouchDB 1.x! This cookbook will move to support CouchDB 2.x
-soon, resolving this issue.
+* CentOS 7.3
 
 ## Cookbooks
 
+* build-essential
 * erlang
 
-When using the `couchdb::source` recipe, the `build-essential` recipe is
-required. It is not a direct dependency of this cookbook as it is an optional
-installation method, and package installation is recommended.
+Everything below this line is not yet updated for the 3.0.0 cookbook
+release!
 
-Attributes
-==========
+-------------------
+
+# Resources
+
+`couchdb_node` - TBD
+
+# Attributes
 
 Cookbook attributes are named under the `couch_db` keyspace.
 
@@ -39,8 +37,7 @@ Cookbook attributes are named under the `couch_db` keyspace.
 * `node['couch_db']['install_erlang']` - specify if erlang should be installed prior to
   couchdb, true by default.
 
-Configuration
--------------
+## Configuration - CURRENTLY DISABLED
 
 The `local.ini` file is dynamically generated from attributes. Each key in
 `node['couch_db']['config']` is a CouchDB configuration directive, and will
