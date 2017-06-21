@@ -1,22 +1,39 @@
+[![Build Status](https://travis-ci.org/wohali/couchdb-cookbook.svg?branch=master)](https://travis-ci.org/wohali/couchdb-cookbook)
+
 # Description
 
-Installs and configures Apache CouchDB 2.x from source.
+Installs and configures Apache CouchDB 2.x from source, optionally enabling
+full-text search capabilities.
 
 # Requirements
 
 Requires a platform that can install Erlang from distribution packages
-provided by Erlang Solutions (`erlang::esl` recipe is used.)
+provided by Erlang Solutions (`erlang::esl` recipe is used)
 
 ## Platform
 
-Tested via Test Kitchen:
+This cookbook supports the following platforms, verified via Test Kitchen:
 
 * CentOS 7.3
+* Debian 7.11 (wheezy), 8.7 (jessie)
+* Ubuntu 14.04 (trusty), 16.04 (xenial)
+
+*NOTE*: This recipe cannot automatically install JDK 6 for Debian 8 and
+Ubuntu 16. Please ensure this prerequisite is managed by roles preceeding
+this one for your nodes if you wish to enable fulltext search ability.
 
 ## Cookbooks
 
-* build-essential
-* erlang
+This cookbook depends on the following external cookbooks:
+* `build-essential`
+* `compat_resource`
+* `erlang`
+* `nodejs`
+* `poise-python`
+* `yum-epel` (RHEL-flavoured distributions only)
+* If fulltext search is enabled:
+  * `java`
+  * `maven`
 
 Everything below this line is not yet updated for the 3.0.0 cookbook
 release!
@@ -26,6 +43,8 @@ release!
 # Resources
 
 `couchdb_node` - TBD
+`couchdb_clouseau` - Internal search provider used by `couchdb_node`. Not
+intended for direct use in wrapper cookbooks.
 
 # Attributes
 

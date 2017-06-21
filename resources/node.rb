@@ -35,7 +35,6 @@ resource_name :couchdb_node
 require 'resolv'
 require 'securerandom'
 
-property :node_name, String, default: 'couchdb'
 property :bind_address, String, default: '0.0.0.0'
 property :port, Integer, default: 5984
 property :local_port, Integer, default: 5986
@@ -45,7 +44,9 @@ property :uuid, String, default: lazy { ::SecureRandom.uuid.tr('-', '') }
 property :cookie, String, default: 'monster'
 property :type, String, default: 'clustered'
 property :loglevel, String, default: 'info'
+property :config, Hash, default: {}
 property :fulltext, [true, false], default: false
+property :extra_vm_args, String
 
 action :create do
   node.default['couch_db']['enable_search'] = true if fulltext
@@ -55,20 +56,20 @@ action :create do
   include_recipe 'couchdb::compile'
 
   # Convenience: if using default node name, use expected paths
-  couchpath = if node_name == 'couchdb'
+  couchpath = if name == 'couchdb'
                 '/opt/couchdb'
               else
-                "/opt/couchdb-#{node_name}"
+                "/opt/couchdb-#{name}"
               end
-  datapath = if node_name == 'couchdb'
+  datapath = if name == 'couchdb'
                '/var/lib/couchdb'
              else
-               "/var/lib/couchdb/#{node_name}"
+               "/var/lib/couchdb/#{name}"
              end
-  logpath = if node_name == 'couchdb'
+  logpath = if name == 'couchdb'
               '/var/log/couchdb'
             else
-              "/var/log/couchdb/#{node_name}"
+              "/var/log/couchdb/#{name}"
             end
 
   bash 'install_couchdb' do
@@ -127,11 +128,12 @@ action :create do
     owner 'couchdb'
     group 'couchdb'
     variables(
-      couchnodename: node_name,
+      couchnodename: new_resource.name,
       cookie: cookie,
-      address: address
+      address: address,
+      extraargs: extra_vm_args
     )
-    notifies :restart, "service[couchdb-#{node_name}]", :delayed
+    notifies :restart, "service[couchdb-#{new_resource.name}]", :delayed
   end
 
   # create local.d ini file
@@ -145,11 +147,12 @@ action :create do
       logpath: logpath,
       loglevel: loglevel,
       datapath: datapath,
-      clusterport: port,
-      clusterbindaddress: bind_address,
-      localport: local_port
+      clusterport: new_resource.port,
+      clusterbindaddress: new_resource.bind_address,
+      localport: new_resource.local_port,
+      config: new_resource.config
     )
-    notifies :restart, "service[couchdb-#{node_name}]", :delayed
+    notifies :restart, "service[couchdb-#{new_resource.name}]", :delayed
   end
 
   # create local.d ini file
@@ -160,10 +163,10 @@ action :create do
     owner 'couchdb'
     group 'couchdb'
     variables(
-      clouseauname: "clouseau-#{node_name}"
+      clouseauname: "clouseau-#{new_resource.name}"
     )
     only_if { fulltext }
-    notifies :restart, "service[couchdb-#{node_name}]", :delayed
+    notifies :restart, "service[couchdb-#{new_resource.name}]", :delayed
   end
 
   # create_if_missing specified to avoid fighting over a hashed admin password
@@ -176,26 +179,24 @@ action :create do
     owner 'couchdb'
     group 'couchdb'
     variables(
-      uuid: uuid,
+      uuid: new_resource.uuid,
       adminuser: admin_username,
       adminpassword: admin_password
     )
     action :create_if_missing
-    notifies :restart, "service[couchdb-#{node_name}]", :delayed
+    notifies :restart, "service[couchdb-#{new_resource.name}]", :delayed
   end
 
-  # TODO: Bring back couch_config template/provider here
-
   # systemd service for platforms that use it
-  systemd_unit "couchdb-#{node_name}.service" do
+  systemd_unit "couchdb-#{new_resource.name}.service" do
     content <<-EOH.gsub(/^\s+/, '')
     [Unit]
-    Description=Apache CouchDB - node #{node_name}
+    Description=Apache CouchDB - node #{new_resource.name}
     Wants=network-online.target
     After=network-online.target
 
     [Service]
-    RuntimeDirectory=couchdb-#{node_name}
+    RuntimeDirectory=couchdb-#{new_resource.name}
     User=couchdb
     Group=couchdb
     ExecStart=#{couchpath}/bin/couchdb
@@ -205,51 +206,51 @@ action :create do
     WantedBy=multi-user.target
     EOH
     action [:create, :enable]
-    only_if '[[ $(systemctl) =~ -\.mount ]]'
+    only_if 'systemctl | grep "^\s*-\.mount" >/dev/null'
   end
-  service "couchdb-#{node_name}" do
+  service "couchdb-#{new_resource.name}" do
     supports status: true, restart: true
     action [:enable, :start]
     notifies :run, 'bash[finish_standalone_setup]', :immediately
-    only_if '[[ $(systemctl) =~ -\.mount ]]'
+    only_if 'systemctl | grep "^\s*-\.mount" >/dev/null'
   end
 
   # SysV-init style startup script for other platforms
-  # systemd will ignore an /etc/init.d script, so always install it
-  template "/etc/init.d/couchdb-#{node_name}" do
+  template "/etc/init.d/couchdb-#{new_resource.name}" do
     cookbook 'couchdb'
     source 'couchdb.init.rhel.erb'
-    mode '0640'
+    mode '0755'
     owner 'couchdb'
     group 'couchdb'
     variables(
       couchpath: couchpath
     )
     action :create
-    not_if '[[ $(systemctl) =~ -\.mount ]]'
+    not_if 'systemctl | grep "^\s*-\.mount" >/dev/null'
     only_if { node['platform_family'] == 'rhel' }
   end
-  template "/etc/init.d/couchdb-#{node_name}" do
+  template "/etc/init.d/couchdb-#{new_resource.name}" do
     cookbook 'couchdb'
     source 'couchdb.init.debian.erb'
-    mode '0640'
+    mode '0755'
     owner 'couchdb'
     group 'couchdb'
     variables(
       couchpath: couchpath
     )
     action :create
-    not_if '[[ $(systemctl) =~ -\.mount ]]'
+    not_if 'systemctl | grep "^\s*-\.mount" >/dev/null'
     only_if { node['platform_family'] == 'debian' }
   end
 
   # clever not_if here checks if systemd is running on this machine
-  service "couchdb-#{node_name}" do
-    init_command "/etc/init.d/couchdb-#{node_name}"
+  service "couchdb-#{new_resource.name}" do
+    init_command "/etc/init.d/couchdb-#{new_resource.name}"
     supports status: true, restart: true, reload: false
     action [:enable, :start]
+    subscribes :restart, "template[/etc/init.d/couchdb-#{new_resource.name}]", :immediately
     notifies :run, 'bash[finish_standalone_setup]', :immediately
-    not_if '[[ $(systemctl) =~ -\.mount ]]'
+    not_if 'systemctl | grep "^\s*-\.mount" >/dev/null'
   end
 
   # standalone setup can be completed once service is running
@@ -267,9 +268,7 @@ action :create do
   end
 
   # now that CouchDB is running, maybe create & start clouseau if requested
-  couchdb_clouseau "clouseau-#{node_name}" do
-    couch_node_name node_name
-    clouseau_node_name "clouseau-#{node_name}"
+  couchdb_clouseau new_resource.name do
     cookie new_resource.cookie
     only_if { fulltext }
   end

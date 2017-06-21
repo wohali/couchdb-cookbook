@@ -56,8 +56,14 @@ when 'rhel'
     version ['1.8.5-19.el7', '1.8.5-19.el7']
   end
 when 'debian'
-  package %w(adduser curl init-system-helpers libicu libmozjs185 procps
-             python python-requests python-progressbar)
+  package %w(adduser curl libicu-dev libmozjs185-dev procps python
+             python-requests python-progressbar)
+  package 'init-system-helpers' do
+    only_if do
+      (node['platform'] == 'debian' && node['platform_version'].to_f >= 8.0) ||
+        (node['platform'] == 'ubuntu' && node['platform_version'].to_f >= 14.00)
+    end
+  end
   # TODO: Support more than rhel and debian flavoured platforms
 end
 
@@ -65,6 +71,14 @@ end
 include_recipe 'build-essential'
 include_recipe 'erlang::esl'
 include_recipe 'nodejs::nodejs_from_binary'
+
+# fix bug on Ubuntu 16+ with ESL erlang package
+bash 'remove_erlang_manpage_symlink' do
+  code <<-EOH
+    rm /usr/lib/erlang/man
+  EOH
+  only_if { node['platform'] == 'ubuntu' && node['platform_version'].to_f >= 16.00 }
+end
 
 case node['platform_family']
 when 'rhel'

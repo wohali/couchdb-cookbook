@@ -16,8 +16,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# NOTE: This is test config data. These are NOT recommended defaults!
+config_data = {
+  couchdb: {
+    max_document_size: 2097152,
+    max_dbs_open: 1000,
+  },
+  log: {
+    level: 'debug',
+  },
+}
+
 couchdb_node 'couchdb' do
   admin_username 'admin'
   admin_password 'password'
   type 'standalone'
+  config config_data
+  # NOTE: These are extra testvm.args arguments, NOT recommended defaults!
+  extra_vm_args "-kernel inet_dist_listen_min 9000 inet_dist_listen_max 9100 inet_dist_use_interface '{127,0,0,1}'"
 end

@@ -33,13 +33,13 @@ platforms:
   - name: ubuntu-16.04
 
 suites:
-  - name: default
-    run_list:
-      - recipe[apt::default]
-      - recipe[couchdb]
-    verifier:
-      inspec_tests:
-        - test/smoke/inspec
+#  - name: default
+#    run_list:
+#      - recipe[apt::default]
+#      - recipe[couchdb]
+#    verifier:
+#      inspec_tests:
+#        - test/smoke/inspec
   - name: source
     run_list:
       - recipe[apt::default]
