@@ -17,3 +17,11 @@ bind_address = <%= @clusterbindaddress %>
 
 [httpd]
 port = <%= @localport %>
+
+<% @config.each do |section, parameters| %>
+[<%= section %>]
+<% parameters.each do |key, value| %>
+<%= key %> = <%= value %>
+<% end %>
+
+<% end %>

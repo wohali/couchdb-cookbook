@@ -23,7 +23,11 @@ default['couch_db']['src_mirror']     = "https://archive.apache.org/dist/couchdb
 # Erlang default overrides
 default['couch_db']['install_erlang'] = true
 node.default['erlang']['install_method'] = 'esl'
-node.default['erlang']['esl']['version'] = '18.3-1'
+node.default['erlang']['esl']['version'] = if node['platform_family'] == 'rhel'
+                                             '18.3-1'
+                                           elsif node['platform_family'] == 'debian'
+                                             '1:18.3'
+                                           end
 
 # NodeJS default overrides
 node.default['nodejs']['install_method'] = 'binary'
@@ -37,9 +41,7 @@ default['couch_db']['dreyfus']['repo_tag'] = 'd83888154be546b2826b3346a987089a64
 default['couch_db']['clouseau']['repo_url'] = 'https://github.com/cloudant-labs/clouseau'
 default['couch_db']['clouseau']['repo_tag'] = '32b2294d40c5e738b52b3d57d2fb006456bc18cd'
 
-# Java/maven overrides for full-text search
-default['java']['install_flavor'] = 'openjdk'
-default['java']['jdk_version'] = '6'
+# maven overrides for full-text search
 force_default['maven']['version'] = '3.2.5'
 force_default['maven']['url'] = 'https://dist.apache.org/repos/dist/release/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.tar.gz'
 force_default['maven']['checksum'] = '8c190264bdf591ff9f1268dc0ad940a2726f9e958e367716a09b8aaa7e74a755'
