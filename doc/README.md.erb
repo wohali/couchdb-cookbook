@@ -1,0 +1,164 @@
+# Description
+
+<% unless fragments['overview'] -%>
+<%= description %>
+<% else -%>
+<%= fragments['overview'] -%>
+<% end -%>
+
+# Requirements
+
+* Chef 12 or higher
+* Network-accessible package repositories
+* EPEL repositories on RHEL platforms
+
+<% if fragments['requirements'] -%>
+<%= fragments['requirements'] -%>
+
+<% end -%>
+## Platform:
+
+<% unless platforms.empty? %>
+<% platforms.each do |platform| %>
+* <%= platform %>
+<% end %>
+<% else %>
+*No platforms defined*
+<% end %>
+
+## Cookbooks:
+
+<% unless dependencies.empty? && recommendations.empty? && suggestions.empty? && conflicting.empty? %>
+<% dependencies.each do |cookbook| %>
+* <%= cookbook %>
+<% end %>
+<% else %>
+*No dependencies defined*
+<% end %>
+
+# Attributes
+
+<% unless attributes.empty? %>
+<% attributes.each do |name, description, default, choice| %>
+* `<%= name %>` - <%= description %><% if !description.nil? && !description.strip.end_with?(".") %>.<% end %> <% unless choice.empty? %>Available options: <%= "`#{choice.map(&:inspect).join('`, `')}`" %>. <% end %>Defaults to `<%= default %>`.
+<% end %>
+<% else %>
+*No attributes defined*
+<% end %>
+
+# Recipes
+
+<% unless recipes.empty? %>
+<% recipes.each do |recipe| %>
+* <% if recipe.top_level_descriptions.empty? %><%= recipe.name %><% else %>[<%= recipe.name %>](#<%= recipe.name.gsub(':','') %>)<% end %><% if recipe.short_description != '' %> - <%= recipe.short_description %><% end %>
+<% end %>
+
+<% recipes.each do |recipe| -%>
+<% unless recipe.top_level_descriptions.empty? -%>
+## <%= recipe.name %>
+
+<% if recipe.top_level_description('main') != '' -%>
+<%= recipe.top_level_description('main') %>
+
+<% end -%>
+<% recipe.top_level_descriptions.keys.select{|k| k != 'main'}.each do |key| -%>
+### <%= key -%>
+
+<%= recipe.top_level_description(key) %>
+
+<% end -%>
+<% end -%>
+<% end -%>
+<% else -%>
+*No recipes defined*
+
+<% end -%>
+<% unless definitions.empty? -%>
+# Definitions
+
+<% definitions.each do |definition| -%>
+* [<%= definition.name %>](#<%= definition.name %>)<% if definition.short_description %> - <%= definition.short_description %><% end %>
+<% end -%>
+
+<% definitions.each do |definition| -%>
+## <%= definition.name %>
+
+<% if definition.top_level_description('main') != '' -%>
+<%= definition.top_level_description('main') -%>
+<% end -%>
+
+<% unless definition.params.empty? -%>
+### Parameters
+
+<% definition.params.each do |param, data| -%>
+- <%= param %>: <%= data['descr'] %>.<% if data['default']%> Defaults to: <%=data['default']%><%end%>
+<% end -%>
+<% end -%>
+<% definition.top_level_descriptions.keys.select{|k| k != 'main'}.each do |key| -%>
+
+### <%= key -%>
+
+<%= definition.top_level_description(key) -%>
+<% end -%>
+<% end -%>
+<% end -%>
+<% unless resources.empty? -%>
+# Resources
+
+<% resources.each do |resource| %>
+* [<%= resource.name %>](#<%= resource.name %>)<% if resource.short_description %> - <%= resource.short_description %><% end %>
+<% end %>
+
+<% resources.each do |resource| -%>
+## <%= resource.name %>
+
+<% if resource.top_level_description('main') != '' -%>
+<%= resource.top_level_description('main') -%>
+
+<% end -%>
+<% unless resource.actions.empty? -%>
+### Actions
+
+<% if resource.default_action.is_a?(Array) %>
+- Default actions: [<%= resource.default_action.join ', ' %>]
+<% end %>
+<% resource.actions.each do |action| -%>
+- <%= action %>: <%= resource.action_description(action) %><% if !resource.default_action.is_a?(Array) && resource.default_action == action %> Default action.<% end %>
+<% end -%>
+<% end -%>
+<% unless resource.attributes.empty? -%>
+
+### Attribute Parameters
+
+<% resource.attributes.each do |attribute| -%>
+- <%= attribute %>: <%= resource.attribute_description(attribute) %><% if resource.attribute_has_default_value?(attribute) %> Defaults to <code><%= resource.attribute_default_value(attribute).inspect %></code>.<% end %>
+<% end -%>
+<% end -%>
+<% resource.top_level_descriptions.keys.select{|k| k != 'main'}.each do |key| -%>
+
+### <%= key -%>
+
+<%= resource.top_level_description(key) -%>
+<% end -%>
+
+<% end -%>
+<% end -%>
+<% fragments.keys.select {|k|k != 'overview' && k != 'credit' && k != 'requirements'}.each do |key| -%>
+<%= fragments[key] %>
+
+<% end -%>
+<% unless fragments['credit'] -%>
+# License and Maintainer
+
+Maintainer:: <%= maintainer %> (<<%= maintainer_email %>>)
+<% unless source_url.empty? -%>
+<%= 'Source:: ' + source_url %>
+<% end -%>
+<% unless issues_url.empty? -%>
+<%= 'Issues:: ' + issues_url %>
+<% end -%>
+
+License:: <%= license %>
+<% else -%>
+<%= fragments['credit'] -%>
+<% end -%>

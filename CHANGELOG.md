@@ -4,8 +4,11 @@ This file is used to list changes made in each version of the CouchDB cookbook.
 
 v3.0.0
 ------
+* Complete rewrite of cookbook as 2 custom resources
+* Currently only installs CouchDB from source as packages are not available
 * **Supports CouchDB 2.0+**
   * If CouchDB 1.x is required, use v2.5.3 of this cookbook.
+* Supports full-text search add-on
 
 v2.5.3
 ------

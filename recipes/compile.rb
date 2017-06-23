@@ -16,7 +16,7 @@
 # limitations under the License.
 =begin
 #<
-Downloads and compiles CouchDB from source.
+INTERNAL USE ONLY. Downloads and compiles CouchDB from source.
 #>
 =end
 

@@ -16,8 +16,8 @@
 # limitations under the License.
 =begin
 #<
-Creates directories, users, and installs runtime and build prerequisites
-for CouchDB when installing from source.
+INTERNAL USE ONLY. Creates directories, users, and installs runtime and build
+prerequisites for CouchDB when installing from source.
 #>
 =end
 
@@ -70,7 +70,6 @@ end
 # install build prerequisites
 include_recipe 'build-essential'
 include_recipe 'erlang::esl'
-include_recipe 'nodejs::nodejs_from_binary'
 
 # fix bug on Ubuntu 16+ with ESL erlang package
 bash 'remove_erlang_manpage_symlink' do
@@ -88,7 +87,5 @@ when 'debian'
              shunit2 tar)
 end
 
+# for couchup, coming in 2.1
 include_recipe 'poise-python'
-python_package 'sphinx' do
-  version '1.4.9'
-end
