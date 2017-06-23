@@ -48,4 +48,10 @@ couchdb_node 'node3' do
   admin_password 'password'
 end
 
-# TODO: join the cluster together
+couchdb_setup_cluster 'doit' do
+  port 15984
+  admin_username 'admin'
+  admin_password 'password'
+  search_string 'name:*'
+  num_nodes 3
+end
