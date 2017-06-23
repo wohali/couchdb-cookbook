@@ -49,7 +49,7 @@ property :fulltext, [true, false], default: false
 property :extra_vm_args, String
 
 action :create do
-  node.default['couch_db']['enable_search'] = true if fulltext
+  node.normal['couch_db']['enable_search'] = true if fulltext
 
   # install prerequisites, and compile CouchDB
   include_recipe 'couchdb::prereq'
@@ -271,6 +271,18 @@ action :create do
   couchdb_clouseau new_resource.name do
     cookie new_resource.cookie
     only_if { fulltext }
+  end
+
+  # make this node searchable for clustering
+  ruby_block 'register_node' do
+    block do
+      Chef::Log.info(new_resource.name)
+      node.default['couch_db']['nodes'][new_resource.name]['address'] = address
+      node.default['couch_db']['nodes'][new_resource.name]['port'] = port
+      # this allows us to converge a dev system in a single run
+      node.save unless Chef::Config[:solo]
+    end
+    not_if { type == 'standalone' }
   end
 end
 
