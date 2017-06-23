@@ -6,7 +6,6 @@ Berksfile.lock
 bin
 .bundle
 .cache
-doc
 Gemfile.lock
 .kitchen
 .kitchen.local.yml

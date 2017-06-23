@@ -7,19 +7,19 @@ require 'knife_cookbook_doc/rake_task'
 require 'rspec/core/rake_task'
 require 'rubocop/rake_task'
 require 'stove/rake_task'
-require 'yard'
 
-task default: [:doc, :rubocop, :foodcritic, :spec]
+task default: [:doc, :rubocop, :foodcritic]
 
 desc 'Run all tasks'
 task all: [:doc, :rubocop, :foodcritic, :spec]
 
-desc 'Build documentation'
-# task doc: [:knifecookbookdoc, :yard]
-task doc: [:yard]
+desc 'Build README'
+task doc: [:knife_cookbook_doc]
 
-# desc 'Generate README.md from _README.md.erb'
-# KnifeCookbookDoc::RakeTask.new(:knifecookbookdoc)
+desc 'Generate README.md from _README.md.erb'
+KnifeCookbookDoc::RakeTask.new do |t|
+  t.options = { template_file: 'doc/README.md.erb' }
+end
 
 FoodCritic::Rake::LintTask.new do |t|
   t.options = { fail_tags: ['all'] }
@@ -40,9 +40,3 @@ RuboCop::RakeTask.new do |task|
 end
 
 Stove::RakeTask.new
-
-YARD::Config.load_plugin 'redcarpet-ext'
-YARD::Rake::YardocTask.new do |t|
-  t.files = ['**/*.rb', '-', 'README.md', 'CHANGELOG.md', 'LICENSE.txt']
-  t.options = ['--markup-provider=redcarpet', '--markup=markdown']
-end

@@ -16,24 +16,21 @@
 # limitations under the License.
 =begin
 #<
-This creates and destroys a CouchDB Clouseau (search) node.
+This creates and destroys a CouchDB Clouseau (search) node, and is automatically
+invoked by the `couchdb_node` resource. There is *no need* to include this resource
+directly in your wrapper cookbook.
 
 @action create  Create the CouchDB Clouseau node.
-@action destroy Destroy the CouchDB Clouseau node.
-
-@section Examples
-
-    # An example of my awesome service
-    mycookbook_awesome_service "my_service" do
-      port 80
-    end
 #>
 =end
 
 resource_name :couchdb_clouseau
 
+#<> @attribute bind_address The address on which the clouseau service will bind.
 property :bind_address, String, default: '127.0.0.1'
+#<> @attribute index_dir The directory in which the clouseau service will store its indexes.
 property :index_dir, String, default: 'default'
+#<> @attribute cookie The Erlang cookie with which the clouseau service will join the cluster.
 property :cookie, String, default: 'monster'
 
 action :create do

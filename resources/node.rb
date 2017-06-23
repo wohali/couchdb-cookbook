@@ -16,16 +16,18 @@
 # limitations under the License.
 =begin
 #<
-This creates and destroys a CouchDB node.
+This creates a CouchDB node, either standalone or as part of a cluster.
 
 @action create  Create the CouchDB node.
-@action destroy Destroy the CouchDB node.
 
 @section Examples
 
-    # An example of my awesome service
-    mycookbook_awesome_service "my_service" do
-      port 80
+    # Standalone node with full-text search enabled.
+    couchdb_node 'couchdb' do
+      admin_username 'admin'
+      admin_password 'password'
+      fulltext true
+      type 'standalone'
     end
 #>
 =end
@@ -35,17 +37,29 @@ resource_name :couchdb_node
 require 'resolv'
 require 'securerandom'
 
+#<> @attribute bind_address The address to which CouchDB will bind.
 property :bind_address, String, default: '0.0.0.0'
+#<> @attribute port The port to which CouchDB will bind the main interface.
 property :port, Integer, default: 5984
+#<> @attribute local_port The port to which CouchDB will bind the node-local (backdoor) interface.
 property :local_port, Integer, default: 5986
+#<> @attribute admin_username The administrator username for CouchDB. In a cluster, all nodes should have the same administrator.
 property :admin_username, String, required: true
+#<> @attribute admin_password The administrator password for CouchDB. In a cluster, all nodes should have the same administrator.
 property :admin_password, String, required: true
+#<> @attribute uuid The UUID for the node. In a cluster, all node UUIDs must match. Auto-generated if not specified.
 property :uuid, String, default: lazy { ::SecureRandom.uuid.tr('-', '') }
+#<> @attribute cookie The cookie for the node. In a cluster, all node cookies must match.
 property :cookie, String, default: 'monster'
+#<> @attribute type The type of the node - `standalone` or `clustered`.
 property :type, String, default: 'clustered'
+#<> @attribute loglevel The logging level of the node.
 property :loglevel, String, default: 'info'
+#<> @attribute config A hash specifying additional settings for the CouchDB configuration ini files. The first level of the hash represents section headings. The second level contains key-pair values to place in the ini file. See `test/cookbooks/couchdb-wrapper-test/recipes/one-node-from-source.rb` for more detail.
 property :config, Hash, default: {}
+#<> @attribute fulltext Whether to enable full-text search functionality or ont.
 property :fulltext, [true, false], default: false
+#<> @attribute extra_vm_args Additional Erlang launch arguments to place in the `vm.args` file. Can be used to specify `inet_dist_listen_min`, `inet_dist_listen_max` and `inet_dist_use_interface` options, for example.
 property :extra_vm_args, String
 
 action :create do
@@ -280,7 +294,7 @@ action :create do
       node.default['couch_db']['nodes'][new_resource.name]['address'] = address
       node.default['couch_db']['nodes'][new_resource.name]['port'] = port
       # this allows us to converge a dev system in a single run
-      node.save unless Chef::Config[:solo]
+      node.save unless Chef::Config[:solo] # ~FC075
     end
     not_if { type == 'standalone' }
   end

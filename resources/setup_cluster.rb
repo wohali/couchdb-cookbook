@@ -21,17 +21,31 @@ Optional role to join all nodes in the cluster together.
 NOTE: Intended to be run on a SINGLE NODE IN THE CLUSTER. Adding this to
 the run list of more than one node in the cluster will result in undefined,
 probably WRONG behaviour.
+
+Through the use of the `address` and `port` options, this resource can be
+run on any Chef-managed machine. It does not have to run on a CouchDB node.
+
+Operators can also avoid this role and manage cluster membership and
+finalisation outside of Chef.
 #>
 =end
 resource_name :couchdb_setup_cluster
 
+#<> @attribute address The CouchDB address through which cluster management is performed.
 property :address, String, default: '127.0.0.1'
+#<> @attribute port The port for the CouchDB address through which cluster management is performed.
 property :port, Integer, default: 5984
+#<> @attribute admin_username The administrator username for CouchDB. In a cluster, all nodes should have the same administrator.
 property :admin_username, String, required: true
+#<> @attribute admin_password The administrator password for CouchDB. In a cluster, all nodes should have the same administrator.
 property :admin_password, String, required: true
-property :search_string, String, default: 'default'
+#<> @attribute role The role to which all nodes in the cluster should belong. Used with Chef Search to retrieve a current list of node addresses and ports.
 property :role, String, default: 'couchdb'
+#<> @attribute search_string Override of the default `roles:<role>` Chef Search expression. Modify this if you need to build a list of nodes in the cluster via different search terms.
+property :search_string, String, default: 'default'
+#<> @attribute num_nodes Required. Number of nodes the Chef Search should return. Ensures that all nodes have been provisioned prior to joining them into a cluster.
 property :num_nodes, Integer, required: true
+#<> @attribute node_list Optional array of [address, port] pairs representing all nodes in the cluster. If a static list is specified here, it will override the Chef Search. Only these nodes will be joined into the cluster. Only use this as a last resort. Example: `[['127.0.0.1', 15984], ['127.0.0.1', 25984], ['127.0.0.1', 35984]]`.
 property :node_list, Array, default: []
 
 default_action :create
@@ -48,7 +62,7 @@ action :create do
   doit = true
   options = { basic_auth: { username: new_resource.admin_username, password: new_resource.admin_password } }
 
-  ruby_block 'look_for_users_db' do
+  ruby_block 'look_for_users_db' do # ~FC005
     block do
       require 'httparty'
       # Check if we need to do anything
@@ -69,11 +83,11 @@ action :create do
   nodes = []
 
   # search for nodes, if necessary
-  ruby_block 'search_for_nodes' do
+  ruby_block 'search_for_nodes' do # ~FC014
     block do
       if node_list.empty?
         srch = if search_string == 'default'
-                 'normal_couch_db_nodes__address:*'
+                 "roles:#{role}"
                else
                  search_string
                end

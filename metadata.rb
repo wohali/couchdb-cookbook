@@ -16,14 +16,10 @@ version           '3.0.0'
 depends           'build-essential'
 depends           'compat_resource'
 depends           'erlang'
-depends           'nodejs'
 depends           'poise-python'
 depends           'yum-epel'
 depends           'java'  # only for full-text search
 depends           'maven' # only for full-text search
-
-recipe            'couchdb::default', 'Installs and configures CouchDB package'
-recipe            'couchdb::source', 'Installs and configures CouchDB from source'
 
 supports          'ubuntu', '>= 14.04'
 supports          'debian', '>= 7.0'
