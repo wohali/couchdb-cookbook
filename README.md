@@ -47,12 +47,28 @@ functionality.
 ## Clustered CouchDB nodes
 
 All nodes in the cluster must have the same `uuid`, `cookie`, `admin_username`
-and `admin_password`. It is recommended to pre-generate the UUID and place it in
+and `admin_password`.
+
+It is recommended to pre-generate the UUID and place it in
 your cookbook. The following one-liner will generate a CouchDB UUID:
 
 ```bash
 python -c "import uuid;print(uuid.uuid4().hex)"
 ```
+
+Further, if you want session cookies from one node to work on another (for
+instance, when putting a load balancer in front of CouchDB) the _hashed_ admin
+password must match on every machine as well. There are many ways to
+pre-generate a hashed password. One way is by downloading and extracting
+CouchDB's source code, changing into the `dev/` directory, and running the
+following one-liner, replacing `MYPASSWORD` with your desired password:
+
+```bash
+python -c 'import uuid;from pbkdf2 import pbkdf2_hex;password="MYPASSWORD";salt=uuid.uuid4().hex;iterations=10;print("-pbkdf2-{},{},{}".format(pbkdf2_hex(password,salt,iterations,20),salt,iterations))'
+```
+
+Place this hashed password in your recipe, cookbook, data bag, encrypted data
+bag, vault, etc.
 
 For each machine to run a CouchDB clustered node, use a block of the form:
 
