@@ -108,7 +108,7 @@ on how to send one :)
    # Navigate to the newly cloned directory
    cd <repo-name>
    # Assign the original repo to a remote called "upstream"
-   git remote add upstream https://github.com/apache/<repo-name>
+   git remote add upstream https://github.com/wohali/couchdb-cookbook
    ```
 
 2. If you cloned a while ago, get the latest changes from upstream:
@@ -146,19 +146,19 @@ on how to send one :)
 ## Functional and Unit Tests
 
 This cookbook is set up to run tests under
-[Opscode's test-kitchen](https://github.com/opscode/test-kitchen). It
+[test-kitchen](https://github.com/test-kitchen/test-kitchen). It
 uses minitest-chef to run integration tests after the node has been
 converged to verify that the state of the node.
 
 Test kitchen should run completely without exception using the default
-[baseboxes provided by Opscode](https://github.com/opscode/bento).
+[baseboxes provided by Chef](https://github.com/chef/bento).
 Because Test Kitchen creates VirtualBox machines and runs through
 every configuration in the Kitchenfile, it may take some time for
 these tests to complete.
 
 If your changes are only for a specific recipe, run only its
 configuration with Test Kitchen. If you are adding a new recipe, or
-other functionality such as a LWRP or definition, please add
+other functionality such as a custom resource or definition, please add
 appropriate tests and ensure they run with Test Kitchen.
 
 If any don't pass, investigate them before submitting your patch.
@@ -176,37 +176,27 @@ in a way that breaks your use cases. The test you wrote will fail,
 signalling to them to research your ticket and use case and accounting
 for it.
 
-If you need help writing tests, please ask on the Chef Developer's
-mailing list, or the #chef-hacking IRC channel.
+If you need help writing tests, please ask on the [chef-dev mailing list](https://discourse.chef.io/c/dev) or the [Chef Community Slack](https://community-slack.chef.io/).
 
 ## Cookbook Contribution Do's and Don't's
 
-Please do include tests for your contribution. If you need help, ask
-on the
-[chef-dev mailing list](http://lists.opscode.com/sympa/info/chef-dev)
-or the
-[#chef-hacking IRC channel](http://community.opscode.com/chat/chef-hacking).
+Please do include tests for your contribution. If you need help, ask on the [chef-dev mailing list](https://discourse.chef.io/c/dev) or the [Chef Community Slack](https://community-slack.chef.io/). Not all platforms that a cookbook supports may be supported by Test Kitchen. Please provide evidence of testing your contribution if it isn't trivial so we don't have to duplicate effort in testing.
 
-Please do indicate new platform (families) or platform versions in the
-commit message, and update the relevant ticket.
+Please do indicate new platform (families) or platform versions in the commit message, and update the relevant ticket.
 
-If a contribution adds new platforms or platform versions, indicate
-such in the body of the commit message(s).
+If a contribution adds new platforms or platform versions, indicate such in the body of the commit message(s), and update the relevant issues. When writing commit messages, it is helpful for others if you indicate the issue. For example: git commit -m '[ISSUE-1041] - Updated pool resource to correctly delete.'
+
+Please do ensure that your changes do not break or modify behavior for other platforms supported by the cookbook. For example if your changes are for Debian, make sure that they do not break on CentOS.
+
+Please do **not** modify the version number in the `metadata.rb`, a maintainer will select the appropriate version based on the release cycle information above.
+
+Please do **not** update the `CHANGELOG.md` for a new version. Not all changes to a cookbook may be merged and released in the same versions. A maintainer will update the `CHANGELOG.md` when releasing a new version of the cookbook.
 
 Please do use [foodcritic](http://www.foodcritic.io/) to lint-check the
 cookbook. Except FC007, it should pass all correctness rules. FC007 is
 okay as long as the dependent cookbooks are *required* for the default
 behavior of the cookbook, such as to support an uncommon platform,
 secondary recipe, etc.
-
-Please do ensure that your changes do not break or modify behavior for
-other platforms supported by the cookbook. For example if your changes
-are for Debian, make sure that they do not break on CentOS.
-
-Please do not modify the version number in the metadata.rb.
-
-Please do not update the CHANGELOG.md for a new version. Not all
-changes to a cookbook may be merged and released in the same versions.
 
 ## Thanks
 
