@@ -17,7 +17,12 @@ The following platforms have been tested with Test Kitchen:
 * Debian 7.11 (wheezy), 8.7 (jessie)
 * Ubuntu 14.04 (trusty), 16.04 (xenial)
 
-Pull requests to add support for other platforms are welcome.
+Partial support is provided for the following platforms:
+
+* Debian 9.x (stretch) - search not yet supported
+* Ubuntu 17.10 (artful) - search not yet supported
+
+Pull requests to add support for other platforms are most welcome.
 
 *NOTE*: This recipe cannot automatically install JDK 6 for Debian 8 and
 Ubuntu 16. Please ensure this prerequisite is managed by roles preceeding
@@ -146,9 +151,9 @@ verification of this cookbook.
 
 # Attributes
 
-* `node['couch_db']['src_version']` - Apache CouchDB version to download. Defaults to `2.0.0`.
+* `node['couch_db']['src_version']` - Apache CouchDB version to download. Defaults to `2.1.1`.
 * `node['couch_db']['src_mirror']` - Apache CouchDB download link. Defaults to `https://archive.apache.org/dist/couchdb/source/#{node['couch_db']['src_version']}/apache-couchdb-#{node['couch_db']['src_version']}.tar.gz`.
-* `node['couch_db']['src_checksum']` - sha256 checksum of Apache CouchDB tarball. Defaults to `ccaf3ce9cb06c50a73e091696e557e2a57c5ba02c5b299e1ac2f5b959ee96eca`.
+* `node['couch_db']['src_checksum']` - sha256 checksum of Apache CouchDB tarball. Defaults to `d5f255abc871ac44f30517e68c7b30d1503ec0f6453267d641e00452c04e7bcc`.
 * `node['couch_db']['install_erlang']` - Whether CouchDB installation will install Erlang or not. Defaults to `true`.
 * `node['couch_db']['configure_flags']` - CouchDB configure options. Defaults to `-c`.
 * `node['couch_db']['dreyfus']['repo_url']` - Full-text search: dreyfus repository URL. Defaults to `https://github.com/cloudant-labs/dreyfus`.

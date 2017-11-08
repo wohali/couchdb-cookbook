@@ -11,7 +11,7 @@ Installs the CouchDB package either from a package repository (default recipe)
 or direct from source code (source recipe). Convenience LWRPs are provided to
 create databases as well.
 EOH
-version           '3.0.1'
+version           '3.0.2'
 
 depends           'build-essential'
 depends           'compat_resource'

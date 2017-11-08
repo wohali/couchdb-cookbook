@@ -16,11 +16,11 @@
 # limitations under the License.
 
 #<> Apache CouchDB version to download.
-default['couch_db']['src_version']    = '2.0.0'
+default['couch_db']['src_version']    = '2.1.1'
 #<> Apache CouchDB download link.
 default['couch_db']['src_mirror']     = "https://archive.apache.org/dist/couchdb/source/#{node['couch_db']['src_version']}/apache-couchdb-#{node['couch_db']['src_version']}.tar.gz"
 #<> sha256 checksum of Apache CouchDB tarball.
-default['couch_db']['src_checksum']   = 'ccaf3ce9cb06c50a73e091696e557e2a57c5ba02c5b299e1ac2f5b959ee96eca'
+default['couch_db']['src_checksum']   = 'd5f255abc871ac44f30517e68c7b30d1503ec0f6453267d641e00452c04e7bcc'
 
 #<> Whether CouchDB installation will install Erlang or not.
 default['couch_db']['install_erlang'] = true
@@ -30,7 +30,11 @@ node.default['erlang']['install_method'] = 'esl'
 node.default['erlang']['esl']['version'] = if node['platform_family'] == 'rhel'
                                              '18.3-1'
                                            elsif node['platform_family'] == 'debian'
-                                             '1:18.3'
+                                             if node['platform_version'].to_f >= 9.0
+                                               '1:19.3.6'
+                                             else
+                                               '1:18.3'
+                                             end
                                            end
 
 #<> CouchDB configure options.
