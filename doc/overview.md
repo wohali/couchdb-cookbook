@@ -15,7 +15,12 @@ The following platforms have been tested with Test Kitchen:
 * Debian 7.11 (wheezy), 8.7 (jessie)
 * Ubuntu 14.04 (trusty), 16.04 (xenial)
 
-Pull requests to add support for other platforms are welcome.
+Partial support is provided for the following platforms:
+
+* Debian 9.x (stretch) - search not yet supported
+* Ubuntu 17.10 (artful) - search not yet supported
+
+Pull requests to add support for other platforms are most welcome.
 
 *NOTE*: This recipe cannot automatically install JDK 6 for Debian 8 and
 Ubuntu 16. Please ensure this prerequisite is managed by roles preceeding
