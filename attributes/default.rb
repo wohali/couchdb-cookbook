@@ -43,11 +43,11 @@ default['couch_db']['configure_flags'] = '-c'
 #<> Full-text search: dreyfus repository URL
 default['couch_db']['dreyfus']['repo_url'] = 'https://github.com/cloudant-labs/dreyfus'
 #<> Full-text search: dreyfus repository tag or hash
-default['couch_db']['dreyfus']['repo_tag'] = 'd83888154be546b2826b3346a987089a64728ee5'
+default['couch_db']['dreyfus']['repo_tag'] = '30b0556047d54795a5b5cfe96a7bc4b75145bb06'
 #<> Full-text search: clouseau repository URL
 default['couch_db']['clouseau']['repo_url'] = 'https://github.com/cloudant-labs/clouseau'
 #<> Full-text search: clouseau repository tag or hash
-default['couch_db']['clouseau']['repo_tag'] = '32b2294d40c5e738b52b3d57d2fb006456bc18cd'
+default['couch_db']['clouseau']['repo_tag'] = 'f2a324bef93d1b5b3c72e3046193bd6782da36c4'
 
 #<> Full-text search: Maven version for CouchDB full-text search. 3.2.5 or earlier REQUIRED.
 force_default['maven']['version'] = '3.2.5'
