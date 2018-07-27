@@ -63,27 +63,27 @@ property :fulltext, [true, false], default: false
 property :extra_vm_args, String
 
 action :create do
-  node.normal['couch_db']['enable_search'] = true if fulltext
+  node.normal['couch_db']['enable_search'] = true if new_resource.fulltext
 
   # install prerequisites, and compile CouchDB
   include_recipe 'couchdb::prereq'
   include_recipe 'couchdb::compile'
 
   # Convenience: if using default node name, use expected paths
-  couchpath = if name == 'couchdb'
+  couchpath = if new_resource.name == 'couchdb'
                 '/opt/couchdb'
               else
-                "/opt/couchdb-#{name}"
+                "/opt/couchdb-#{new_resource.name}"
               end
-  datapath = if name == 'couchdb'
+  datapath = if new_resource.name == 'couchdb'
                '/var/lib/couchdb'
              else
-               "/var/lib/couchdb/#{name}"
+               "/var/lib/couchdb/#{new_resource.name}"
              end
-  logpath = if name == 'couchdb'
+  logpath = if new_resource.name == 'couchdb'
               '/var/log/couchdb'
             else
-              "/var/log/couchdb/#{name}"
+              "/var/log/couchdb/#{new_resource.name}"
             end
 
   bash 'install_couchdb' do
@@ -112,12 +112,12 @@ action :create do
   end
 
   # Determine the address of the node for the name
-  if type == 'standalone'
+  if new_resource.type == 'standalone'
     address = 'localhost'
     frontip = '127.0.0.1'
-  elsif type == 'clustered' && bind_address == '127.0.0.1'
+  elsif new_resource.type == 'clustered' && new_resource.bind_address == '127.0.0.1'
     Chef::Application.fatal!('Clustered CouchDB nodes cannot be bound to 127.0.0.1!', 1)
-  elsif type == 'clustered' && bind_address == '0.0.0.0'
+  elsif new_resource.type == 'clustered' && new_resource.bind_address == '0.0.0.0'
     begin
       frontip = '127.0.0.1'
       address = if Resolv.getaddress(node['fqdn']) == node['ipaddress']
@@ -130,8 +130,8 @@ action :create do
       address = node['ipaddress']
     end
   else
-    address = bind_address
-    frontip = bind_address
+    address = new_resource.bind_address
+    frontip = new_resource.bind_address
   end
 
   # create vm.args file
@@ -143,9 +143,9 @@ action :create do
     group 'couchdb'
     variables(
       couchnodename: new_resource.name,
-      cookie: cookie,
+      cookie: new_resource.cookie,
       address: address,
-      extraargs: extra_vm_args
+      extraargs: new_resource.extra_vm_args
     )
     notifies :restart, "service[couchdb-#{new_resource.name}]", :delayed
   end
@@ -159,7 +159,7 @@ action :create do
     group 'couchdb'
     variables(
       logpath: logpath,
-      loglevel: loglevel,
+      loglevel: new_resource.loglevel,
       datapath: datapath,
       clusterport: new_resource.port,
       clusterbindaddress: new_resource.bind_address,
@@ -179,7 +179,7 @@ action :create do
     variables(
       clouseauname: "clouseau-#{new_resource.name}"
     )
-    only_if { fulltext }
+    only_if { new_resource.fulltext }
     notifies :restart, "service[couchdb-#{new_resource.name}]", :delayed
   end
 
@@ -194,8 +194,8 @@ action :create do
     group 'couchdb'
     variables(
       uuid: new_resource.uuid,
-      adminuser: admin_username,
-      adminpassword: admin_password
+      adminuser: new_resource.admin_username,
+      adminpassword: new_resource.admin_password
     )
     action :create_if_missing
     notifies :restart, "service[couchdb-#{new_resource.name}]", :delayed
@@ -272,19 +272,19 @@ action :create do
   bash 'finish_standalone_setup' do
     code <<-EOH
       sleep 5
-      curl -X PUT --user #{admin_username}:#{admin_password} http://#{frontip}:#{port}/_users || true
-      curl -X PUT --user #{admin_username}:#{admin_password} http://#{frontip}:#{port}/_replicator || true
-      curl -X PUT --user #{admin_username}:#{admin_password} http://#{frontip}:#{port}/_global_changes || true
+      curl -X PUT --user #{new_resource.admin_username}:#{new_resource.admin_password} http://#{frontip}:#{new_resource.port}/_users || true
+      curl -X PUT --user #{new_resource.admin_username}:#{new_resource.admin_password} http://#{frontip}:#{new_resource.port}/_replicator || true
+      curl -X PUT --user #{new_resource.admin_username}:#{new_resource.admin_password} http://#{frontip}:#{new_resource.port}/_global_changes || true
     EOH
     action :nothing
-    only_if { type == 'standalone' }
-    not_if "curl http://#{frontip}:#{port}/_users"
+    only_if { new_resource.type == 'standalone' }
+    not_if "curl http://#{frontip}:#{new_resource.port}/_users"
   end
 
   # now that CouchDB is running, maybe create & start clouseau if requested
   couchdb_clouseau new_resource.name do
     cookie new_resource.cookie
-    only_if { fulltext }
+    only_if { new_resource.fulltext }
   end
 
   # make this node searchable for clustering
@@ -292,11 +292,11 @@ action :create do
     block do
       Chef::Log.info(new_resource.name)
       node.default['couch_db']['nodes'][new_resource.name]['address'] = address
-      node.default['couch_db']['nodes'][new_resource.name]['port'] = port
+      node.default['couch_db']['nodes'][new_resource.name]['port'] = new_resource.port
       # this allows us to converge a dev system in a single run
       node.save unless Chef::Config[:solo] # ~FC075
     end
-    not_if { type == 'standalone' }
+    not_if { new_resource.type == 'standalone' }
   end
 end
 

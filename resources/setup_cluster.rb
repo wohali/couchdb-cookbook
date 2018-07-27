@@ -85,11 +85,11 @@ action :create do
   # search for nodes, if necessary
   ruby_block 'search_for_nodes' do # ~FC014
     block do
-      if node_list.empty?
-        srch = if search_string == 'default'
-                 "roles:#{role}"
+      if new_resource.node_list.empty?
+        srch = if new_resource.search_string == 'default'
+                 "roles:#{new_resource.role}"
                else
-                 search_string
+                 new_resource.search_string
                end
         Chef::Log.warn(srch)
         search_results = search(:node, srch)
@@ -100,10 +100,10 @@ action :create do
           end
         end
       else
-        nodes = node_list
+        nodes = new_resource.node_list
       end
-      if nodes.length != num_nodes
-        Chef::Log.warn("Refusing to finalise cluster. #{num_nodes} expected, #{nodes.length} found.")
+      if nodes.length != new_resource.num_nodes
+        Chef::Log.warn("Refusing to finalise cluster. #{new_resource.num_nodes} expected, #{nodes.length} found.")
         doit = false
       end
     end
