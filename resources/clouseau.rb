@@ -77,8 +77,8 @@ action :create do
                         "/opt/#{full_name}"
                       end
 
-  full_index_path = if index_dir != 'default'
-                      index_dir
+  full_index_path = if new_resource.index_dir != 'default'
+                      new_resource.index_dir
                     elsif name == 'couchdb'
                       '/var/lib/clouseau'
                     else
@@ -111,8 +111,8 @@ action :create do
     group 'clouseau'
     variables(
       nodename: full_name,
-      cookie: cookie,
-      address: bind_address,
+      cookie: new_resource.cookie,
+      address: new_resource.bind_address,
       indexdir: full_index_path
     )
   end
