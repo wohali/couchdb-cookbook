@@ -69,6 +69,7 @@ CouchDB's source code, changing into the `dev/` directory, and running the
 following one-liner, replacing `MYPASSWORD` with your desired password:
 
 ```bash
+sudo pip install simple-pbkdf2
 python -c 'import uuid;from pbkdf2 import pbkdf2_hex;password="MYPASSWORD";salt=uuid.uuid4().hex;iterations=10;print("-pbkdf2-{},{},{}".format(pbkdf2_hex(password,salt,iterations,20),salt,iterations))'
 ```
 
