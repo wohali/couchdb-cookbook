@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rake', '10.5.0'
+gem 'rake', '12.3.3'
 gem 'chef'
 gem 'test-kitchen', '1.15.0'
 gem 'knife-cookbook-doc'
